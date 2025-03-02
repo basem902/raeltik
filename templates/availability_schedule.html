@@ -1,0 +1,823 @@
+{% extends "base.html" %}
+
+{% block title %}إدارة جدول التوفر - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* الأنماط الموجودة مسبقاً */
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important; /* إضافة مساحة في الأسفل للشريط السفلي */
+    }
+    
+    .availability-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .page-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .card {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        margin-bottom: 25px;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 20px;
+        transition: color 0.3s ease;
+    }
+    
+    .calendar-container {
+        margin-bottom: 30px;
+    }
+    
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .calendar-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .calendar-nav {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .calendar-nav-btn {
+        background-color: var(--action-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .calendar-nav-btn:hover {
+        background-color: var(--border-color);
+    }
+    
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 8px;
+    }
+    
+    .calendar-day-header {
+        text-align: center;
+        font-weight: 600;
+        color: var(--text-secondary);
+        padding: 8px;
+        font-size: 14px;
+        transition: color 0.3s ease;
+    }
+    
+    .calendar-day {
+        position: relative;
+        height: 100px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 8px;
+        background-color: var(--action-bg);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .calendar-day:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .calendar-day-number {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .calendar-day-status {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+    
+    .status-available {
+        background-color: var(--success-color);
+    }
+    
+    .status-unavailable {
+        background-color: var(--danger-color);
+    }
+    
+    .status-partial {
+        background-color: var(--warning-color);
+    }
+    
+    .calendar-day-appointments {
+        margin-top: 5px;
+        font-size: 12px;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    
+    .calendar-day.other-month {
+        opacity: 0.5;
+    }
+    
+    .calendar-day.today {
+        border: 2px solid var(--primary-color);
+    }
+    
+    .time-slots-container {
+        margin-top: 30px;
+    }
+    
+    .time-slots-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .time-slots-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .time-slots-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .time-slot {
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 10px;
+        text-align: center;
+        background-color: var(--action-bg);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .time-slot:hover {
+        border-color: var(--primary-color);
+    }
+    
+    .time-slot.selected {
+        background-color: rgba(212, 175, 55, 0.1);
+        border-color: var(--primary-color);
+    }
+    
+    .time-slot.unavailable {
+        background-color: rgba(220, 53, 69, 0.1);
+        border-color: var(--danger-color);
+        color: var(--danger-color);
+        cursor: not-allowed;
+    }
+    
+    .time-slot-text {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .appointments-list {
+        margin-top: 30px;
+    }
+    
+    .appointment-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 1px solid var(--border-color);
+        transition: background-color 0.3s ease;
+    }
+    
+    .appointment-item:last-child {
+        border-bottom: none;
+    }
+    
+    .appointment-item:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+    
+    .appointment-date {
+        flex: 0 0 120px;
+        font-weight: 600;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .appointment-time {
+        flex: 0 0 100px;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    
+    .appointment-client {
+        flex: 1;
+        display: flex;
+        align-items: center;
+    }
+    
+    .appointment-client-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-left: 10px;
+    }
+    
+    .appointment-client-name {
+        font-weight: 600;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .appointment-property {
+        flex: 1;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    
+    .appointment-status {
+        flex: 0 0 120px;
+        text-align: center;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .status-confirmed {
+        background-color: rgba(25, 135, 84, 0.1);
+        color: var(--success-color);
+    }
+    
+    .status-pending {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: var(--warning-color);
+    }
+    
+    .status-cancelled {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: var(--danger-color);
+    }
+    
+    .appointment-actions {
+        flex: 0 0 100px;
+        text-align: left;
+    }
+    
+    .action-btn {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    .action-btn:hover {
+        color: var(--primary-color);
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .modal-content {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease;
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+        transition: border-color 0.3s ease;
+    }
+    
+    .modal-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .modal-close {
+        font-size: 24px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+    
+    .modal-close:hover {
+        color: var(--text-color);
+    }
+    
+    .modal-body {
+        margin-bottom: 20px;
+    }
+    
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+        transition: border-color 0.3s ease;
+    }
+    
+    .btn {
+        padding: 10px 15px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background-color: #c49f33;
+        transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+        background-color: var(--action-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+    }
+    
+    .btn-secondary:hover {
+        background-color: var(--border-color);
+    }
+    
+    .btn-danger {
+        background-color: var(--danger-color);
+        color: white;
+        border: none;
+    }
+    
+    .btn-danger:hover {
+        background-color: #bb2d3b;
+        transform: translateY(-2px);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background-color: var(--action-bg);
+        color: var(--text-color);
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    }
+    
+    .form-check {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .form-check-input {
+        margin-left: 10px;
+    }
+    
+    .form-check-label {
+        font-size: 14px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+        .calendar-grid {
+            grid-template-columns: repeat(7, 1fr);
+        }
+        
+        .calendar-day {
+            height: 80px;
+        }
+        
+        .appointment-item {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .appointment-date,
+        .appointment-time,
+        .appointment-client,
+        .appointment-property,
+        .appointment-status,
+        .appointment-actions {
+            flex: 0 0 100%;
+            margin-bottom: 10px;
+            text-align: right;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="availability-container">
+    <div class="page-header">
+        <h1 class="page-title">إدارة جدول التوفر</h1>
+    </div>
+    
+    <!-- التقويم الشهري -->
+    <div class="card">
+        <h2 class="card-title">التقويم الشهري</h2>
+        
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h3 class="calendar-title">مارس 2025</h3>
+                <div class="calendar-nav">
+                    <div class="calendar-nav-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="calendar-nav-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="calendar-grid">
+                <!-- أيام الأسبوع -->
+                <div class="calendar-day-header">الأحد</div>
+                <div class="calendar-day-header">الإثنين</div>
+                <div class="calendar-day-header">الثلاثاء</div>
+                <div class="calendar-day-header">الأربعاء</div>
+                <div class="calendar-day-header">الخميس</div>
+                <div class="calendar-day-header">الجمعة</div>
+                <div class="calendar-day-header">السبت</div>
+                
+                <!-- الأيام من الشهر السابق -->
+                <div class="calendar-day other-month">
+                    <div class="calendar-day-number">23</div>
+                </div>
+                <div class="calendar-day other-month">
+                    <div class="calendar-day-number">24</div>
+                </div>
+                <div class="calendar-day other-month">
+                    <div class="calendar-day-number">25</div>
+                </div>
+                <div class="calendar-day other-month">
+                    <div class="calendar-day-number">26</div>
+                </div>
+                <div class="calendar-day other-month">
+                    <div class="calendar-day-number">27</div>
+                </div>
+                <div class="calendar-day other-month">
+                    <div class="calendar-day-number">28</div>
+                </div>
+                
+                <!-- أيام الشهر الحالي -->
+                <div class="calendar-day today">
+                    <div class="calendar-day-number">1</div>
+                    <div class="calendar-day-status status-available"></div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">2</div>
+                    <div class="calendar-day-status status-available"></div>
+                    <div class="calendar-day-appointments">2 مواعيد</div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">3</div>
+                    <div class="calendar-day-status status-partial"></div>
+                    <div class="calendar-day-appointments">1 موعد</div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">4</div>
+                    <div class="calendar-day-status status-unavailable"></div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">5</div>
+                    <div class="calendar-day-status status-available"></div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">6</div>
+                    <div class="calendar-day-status status-available"></div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">7</div>
+                    <div class="calendar-day-status status-available"></div>
+                </div>
+                
+                <!-- المزيد من الأيام... -->
+                <div class="calendar-day">
+                    <div class="calendar-day-number">8</div>
+                    <div class="calendar-day-status status-available"></div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">9</div>
+                    <div class="calendar-day-status status-available"></div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">10</div>
+                    <div class="calendar-day-status status-available"></div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">11</div>
+                    <div class="calendar-day-status status-available"></div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">12</div>
+                    <div class="calendar-day-status status-available"></div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">13</div>
+                    <div class="calendar-day-status status-available"></div>
+                </div>
+                <div class="calendar-day">
+                    <div class="calendar-day-number">14</div>
+                    <div class="calendar-day-status status-available"></div>
+                </div>
+                
+                <!-- ... وهكذا لبقية الأيام -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- إعدادات الأوقات المتاحة -->
+    <div class="card">
+        <h2 class="card-title">إعدادات الأوقات المتاحة</h2>
+        
+        <div class="time-slots-container">
+            <div class="time-slots-header">
+                <h3 class="time-slots-title">الأوقات المتاحة ليوم السبت، 1 مارس 2025</h3>
+            </div>
+            
+            <div class="time-slots-grid">
+                <div class="time-slot selected">
+                    <div class="time-slot-text">9:00 ص</div>
+                </div>
+                <div class="time-slot selected">
+                    <div class="time-slot-text">10:00 ص</div>
+                </div>
+                <div class="time-slot selected">
+                    <div class="time-slot-text">11:00 ص</div>
+                </div>
+                <div class="time-slot unavailable">
+                    <div class="time-slot-text">12:00 م</div>
+                </div>
+                <div class="time-slot unavailable">
+                    <div class="time-slot-text">1:00 م</div>
+                </div>
+                <div class="time-slot">
+                    <div class="time-slot-text">2:00 م</div>
+                </div>
+                <div class="time-slot">
+                    <div class="time-slot-text">3:00 م</div>
+                </div>
+                <div class="time-slot">
+                    <div class="time-slot-text">4:00 م</div>
+                </div>
+                <div class="time-slot selected">
+                    <div class="time-slot-text">5:00 م</div>
+                </div>
+                <div class="time-slot selected">
+                    <div class="time-slot-text">6:00 م</div>
+                </div>
+                <div class="time-slot">
+                    <div class="time-slot-text">7:00 م</div>
+                </div>
+                <div class="time-slot">
+                    <div class="time-slot-text">8:00 م</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="allDays">
+                    <label class="form-check-label" for="allDays">تطبيق هذه الإعدادات على جميع أيام الأسبوع</label>
+                </div>
+            </div>
+            
+            <div style="text-align: left;">
+                <button class="btn btn-primary">حفظ الإعدادات</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- قائمة المواعيد المحجوزة -->
+    <div class="card">
+        <h2 class="card-title">المواعيد المحجوزة</h2>
+        
+        <div class="appointments-list">
+            <div class="appointment-item">
+                <div class="appointment-date">2 مارس 2025</div>
+                <div class="appointment-time">10:00 ص</div>
+                <div class="appointment-client">
+                    <img src="/static/images/avatar1.jpg" alt="صورة العميل" class="appointment-client-avatar">
+                    <div class="appointment-client-name">أحمد محمد</div>
+                </div>
+                <div class="appointment-property">فيلا فاخرة في الرياض</div>
+                <div class="appointment-status">
+                    <span class="status-badge status-confirmed">مؤكد</span>
+                </div>
+                <div class="appointment-actions">
+                    <button class="action-btn">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="appointment-item">
+                <div class="appointment-date">2 مارس 2025</div>
+                <div class="appointment-time">2:00 م</div>
+                <div class="appointment-client">
+                    <img src="/static/images/avatar2.jpg" alt="صورة العميل" class="appointment-client-avatar">
+                    <div class="appointment-client-name">سارة عبدالله</div>
+                </div>
+                <div class="appointment-property">شقة مفروشة في الدمام</div>
+                <div class="appointment-status">
+                    <span class="status-badge status-pending">في الانتظار</span>
+                </div>
+                <div class="appointment-actions">
+                    <button class="action-btn">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="action-btn">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="action-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="appointment-item">
+                <div class="appointment-date">3 مارس 2025</div>
+                <div class="appointment-time">11:00 ص</div>
+                <div class="appointment-client">
+                    <img src="/static/images/avatar3.jpg" alt="صورة العميل" class="appointment-client-avatar">
+                    <div class="appointment-client-name">خالد العمري</div>
+                </div>
+                <div class="appointment-property">أرض استثمارية في جدة</div>
+                <div class="appointment-status">
+                    <span class="status-badge status-cancelled">ملغي</span>
+                </div>
+                <div class="appointment-actions">
+                    <button class="action-btn">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نافذة تعيين فترات غير متاحة -->
+    <div class="modal" id="unavailablePeriodModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">تعيين فترة غير متاحة</h2>
+                <i class="fas fa-times modal-close" id="closeUnavailablePeriodModal"></i>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="unavailableStartDate">تاريخ البداية</label>
+                    <input type="date" class="form-control" id="unavailableStartDate">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="unavailableEndDate">تاريخ النهاية</label>
+                    <input type="date" class="form-control" id="unavailableEndDate">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="unavailableReason">سبب عدم التوفر</label>
+                    <textarea class="form-control" id="unavailableReason" rows="3"></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelUnavailablePeriod">إلغاء</button>
+                <button class="btn btn-primary" id="saveUnavailablePeriod">حفظ</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // تحديد العناصر
+        const timeSlots = document.querySelectorAll('.time-slot:not(.unavailable)');
+        const calendarDays = document.querySelectorAll('.calendar-day');
+        
+        // إضافة مستمع الأحداث للفترات الزمنية
+        timeSlots.forEach(slot => {
+            slot.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+        
+        // إضافة مستمع الأحداث لأيام التقويم
+        calendarDays.forEach(day => {
+            day.addEventListener('click', function() {
+                // هنا يمكن إضافة منطق لعرض الفترات الزمنية لليوم المحدد
+                const dayNumber = this.querySelector('.calendar-day-number').textContent;
+                document.querySelector('.time-slots-title').textContent = `الأوقات المتاحة ليوم السبت، ${dayNumber} مارس 2025`;
+            });
+        });
+    });
+</script>
+{% endblock %}

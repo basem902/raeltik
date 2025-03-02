@@ -1,0 +1,484 @@
+{% extends "base.html" %}
+
+{% block title %}الملف الشخصي | تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important; /* إضافة مساحة في الأسفل للشريط السفلي */
+    }
+    
+    .profile-container {
+        padding: 20px 15px;
+        padding-bottom: 70px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .page-title {
+        color: var(--text-color);
+        margin-bottom: 20px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: bold;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+    
+    .profile-header {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin: 0 auto 15px;
+        background-color: var(--primary-color);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        font-family: 'Cairo', sans-serif;
+        box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .profile-avatar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4);
+    }
+    
+    .profile-name {
+        font-family: 'Cairo', sans-serif;
+        font-weight: bold;
+        font-size: 22px;
+        margin-bottom: 5px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .profile-email {
+        font-family: 'Tajawal', sans-serif;
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+        transition: color 0.3s ease;
+    }
+    
+    .profile-role {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-family: 'Cairo', sans-serif;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .profile-section {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeIn 0.5s ease;
+        animation-fill-mode: both;
+    }
+    
+    .profile-section:nth-child(3) {
+        animation-delay: 0.1s;
+    }
+    
+    .profile-section:nth-child(4) {
+        animation-delay: 0.2s;
+    }
+    
+    .profile-section:nth-child(5) {
+        animation-delay: 0.3s;
+    }
+    
+    .section-title {
+        font-family: 'Cairo', sans-serif;
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: var(--text-color);
+        display: flex;
+        align-items: center;
+        transition: color 0.3s ease;
+    }
+    
+    .section-title i {
+        margin-left: 10px;
+        color: var(--primary-color);
+        transition: color 0.3s ease;
+    }
+    
+    .profile-stats {
+        display: flex;
+        justify-content: space-around;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    
+    .stat-item {
+        flex: 1;
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-item:hover {
+        transform: translateY(-3px);
+    }
+    
+    .stat-value {
+        font-family: 'Roboto', sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    .stat-label {
+        font-family: 'Tajawal', sans-serif;
+        font-size: 14px;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    
+    .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+        transition: border-color 0.3s ease;
+    }
+    
+    .setting-item:last-child {
+        border-bottom: none;
+    }
+    
+    .setting-label {
+        font-family: 'Tajawal', sans-serif;
+        font-size: 16px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .setting-value {
+        font-family: 'Tajawal', sans-serif;
+        font-size: 14px;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+    }
+    
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+    }
+    
+    input:checked + .slider {
+        background-color: var(--primary-color);
+    }
+    
+    input:focus + .slider {
+        box-shadow: 0 0 1px var(--primary-color);
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+    
+    .slider.round {
+        border-radius: 24px;
+    }
+    
+    .slider.round:before {
+        border-radius: 50%;
+    }
+    
+    .account-options {
+        margin-bottom: 15px;
+    }
+    
+    .account-option {
+        display: flex;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-color);
+        text-decoration: none;
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .account-option:hover {
+        background-color: var(--action-bg);
+    }
+    
+    .account-option:last-child {
+        border-bottom: none;
+    }
+    
+    .option-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--action-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 15px;
+        color: var(--primary-color);
+        transition: background-color 0.3s ease;
+    }
+    
+    .option-text {
+        font-family: 'Tajawal', sans-serif;
+        font-size: 16px;
+        flex-grow: 1;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .option-arrow {
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    
+    .logout-button {
+        display: block;
+        width: 100%;
+        padding: 12px 0;
+        background-color: var(--alert-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Cairo', sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    
+    .logout-button:hover {
+        background-color: #c0392b;
+        transform: translateY(-2px);
+    }
+    
+    .logout-button i {
+        margin-left: 8px;
+    }
+    
+    /* Dark mode specific styles */
+    .dark-mode .profile-header,
+    .dark-mode .profile-section {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <h1 class="page-title">الملف الشخصي</h1>
+    
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {{ user.name[0] }}
+        </div>
+        <h2 class="profile-name">{{ user.name }}</h2>
+        <p class="profile-email">{{ user.email }}</p>
+        <span class="profile-role">
+            {% if user.role == 'client' %}
+                عميل
+            {% elif user.role == 'agent' %}
+                وكيل عقاري
+            {% else %}
+                {{ user.role }}
+            {% endif %}
+        </span>
+    </div>
+    
+    <div class="profile-section">
+        <h3 class="section-title">
+            <i class="fas fa-chart-line"></i>
+            إحصائيات
+        </h3>
+        <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-value">{{ user.saved_properties|length }}</div>
+                <div class="stat-label">العقارات المحفوظة</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ appointments_count }}</div>
+                <div class="stat-label">المواعيد</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ reviews_count }}</div>
+                <div class="stat-label">المراجعات</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="profile-section">
+        <h3 class="section-title">
+            <i class="fas fa-cog"></i>
+            الإعدادات
+        </h3>
+        <div class="setting-item">
+            <span class="setting-label">الإشعارات</span>
+            <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="slider round"></span>
+            </label>
+        </div>
+        {% if g.user.role in ['admin', 'company'] %}
+        <div class="mt-3">
+            <a href="{{ url_for('settings') }}" class="btn btn-primary btn-sm">
+                <i class="fas fa-cog ml-1"></i> إدارة جميع الإعدادات
+            </a>
+        </div>
+        {% endif %}
+        <div class="setting-item">
+            <span class="setting-label">الوضع الداكن</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
+        <div class="setting-item">
+            <span class="setting-label">اللغة</span>
+            <span class="setting-value">العربية</span>
+        </div>
+    </div>
+    
+    <div class="profile-section">
+        <h3 class="section-title">
+            <i class="fas fa-user-shield"></i>
+            الحساب
+        </h3>
+        <div class="account-options">
+            <a href="#" class="account-option">
+                <div class="option-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div class="option-text">
+                    تغيير كلمة المرور
+                </div>
+                <div class="option-arrow">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+            </a>
+            <a href="{{ url_for('appointments') }}" class="account-option">
+                <div class="option-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="option-text">
+                    إدارة المواعيد
+                </div>
+                <div class="option-arrow">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+            </a>
+            <a href="#" class="account-option">
+                <div class="option-icon">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+                <div class="option-text">
+                    تعديل الملف الشخصي
+                </div>
+                <div class="option-arrow">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+            </a>
+        </div>
+        <a href="{{ url_for('logout') }}" class="logout-button">
+            <i class="fas fa-sign-out-alt"></i>
+            تسجيل الخروج
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle dark mode
+        const darkModeToggle = document.querySelector('#darkModeToggle');
+        
+        darkModeToggle.addEventListener('change', function() {
+            toggleDarkMode();
+        });
+        
+        // Check if dark mode is enabled in localStorage
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            darkModeToggle.checked = true;
+            document.body.classList.add('dark-mode');
+        }
+        
+        // Add animation to stats on hover
+        const statItems = document.querySelectorAll('.stat-item');
+        statItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                const statValue = this.querySelector('.stat-value');
+                statValue.style.transform = 'scale(1.1)';
+                statValue.style.transition = 'transform 0.3s ease';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                const statValue = this.querySelector('.stat-value');
+                statValue.style.transform = 'scale(1)';
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,527 @@
+{
+    "users": [
+        {
+            "id": "1",
+            "name": "أحمد محمد",
+            "role": "client",
+            "email": "ahmed@example.com",
+            "password": "pbkdf2:sha256:150000$KuDXcXRv$d9f44e7b3a9c7c8f8f3a8e7d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0",
+            "saved_properties": [
+                2,
+                3
+            ],
+            "created_at": "2025-01-15"
+        },
+        {
+            "id": "2",
+            "name": "سارة عبدالله",
+            "role": "client",
+            "email": "sara@example.com",
+            "password": "pbkdf2:sha256:150000$LvEXdYrZ$d9f44e7b3a9c7c8f8f3a8e7d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0",
+            "saved_properties": [
+                1,
+                4
+            ],
+            "created_at": "2025-01-20"
+        },
+        {
+            "id": "3",
+            "name": "باسم محمد الحجري",
+            "email": "basem@hh.com",
+            "password": "scrypt:32768:8:1$roJyw53C1eONOKZd$b0d81f4b9540ed78593b0f103bee321817ffd3e16a95b01d0001a399e22965a2ca3b5289f9b2273060917995535d9e2fb8ed92ad95544e90fddcdeb2c3c9eb5c",
+            "role": "client",
+            "saved_properties": []
+        },
+        {
+            "id": "4",
+            "name": "أحمد محمد السعيد",
+            "email": "ahmed.saeed@tiknew.com",
+            "password": "123456",
+            "role": "agent",
+            "saved_properties": [],
+            "agent_id": "agent123",
+            "created_at": "2025-01-25"
+        },
+        {
+            "id": "5",
+            "name": "الأفق الذهبي للتطوير العقاري",
+            "email": "info@goldenhorizon.sa",
+            "password": "123456",
+            "role": "company",
+            "company_id": "comp789",
+            "created_at": "2025-02-01",
+            "saved_properties": []
+        }
+    ],
+    "properties": [
+        {
+            "id": "1",
+            "title": "فيلا فاخرة في الرياض",
+            "description": "فيلا واسعة بموقع مميز في حي النرجس. تتميز بتصميم عصري وإطلالة رائعة على الحديقة المركزية. تحتوي على مسبح خاص وحديقة واسعة ومساحات خضراء، بالإضافة إلى نظام أمان متكامل وموقف سيارات متعدد.",
+            "price": 1500000,
+            "location": "الرياض، حي النرجس",
+            "area": 350,
+            "bedrooms": 5,
+            "bathrooms": 3,
+            "garages": 2,
+            "type": "villa",
+            "status": "active",
+            "agent_id": "5",
+            "views": 1245,
+            "inquiries": 32,
+            "created_at": "2025-02-15",
+            "videos": [
+                "https://assets.mixkit.co/videos/preview/mixkit-modern-living-room-interior-3505-large.mp4"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=1000&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1613977257592-4a9a32f9141b?q=80&w=1000&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1613977257731-5f50b6585d50?q=80&w=1000&auto=format&fit=crop"
+            ],
+            "features": [
+                "حديقة خاصة",
+                "مسبح",
+                "موقف سيارات",
+                "نظام أمان متكامل",
+                "مطبخ مجهز",
+                "تكييف مركزي"
+            ],
+            "likes": 245,
+            "comments": [
+                {
+                    "user_id": "2",
+                    "text": "هل يمكن التفاوض على السعر؟",
+                    "date": "2025-02-15"
+                },
+                {
+                    "user_id": "1",
+                    "text": "فيلا رائعة، هل هي قريبة من المدارس؟",
+                    "date": "2025-02-20"
+                }
+            ]
+        },
+        {
+            "id": "2",
+            "title": "شقة مطلة على البحر",
+            "description": "شقة فاخرة بإطلالة مباشرة على البحر في كورنيش جدة. تتميز بتشطيبات راقية ونوافذ زجاجية كبيرة تسمح بدخول أشعة الشمس وتوفر إطلالة بانورامية على البحر الأحمر.",
+            "price": 900000,
+            "location": "جدة، الكورنيش",
+            "area": 180,
+            "bedrooms": 3,
+            "bathrooms": 2,
+            "garages": 1,
+            "type": "apartment",
+            "status": "pending",
+            "agent_id": "6",
+            "views": 856,
+            "inquiries": 18,
+            "created_at": "2025-02-10",
+            "videos": [
+                "https://assets.mixkit.co/videos/preview/mixkit-real-estate-agent-showing-a-house-to-a-couple-32747-large.mp4"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1000&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1560185007-cde436f6a4d0?q=80&w=1000&auto=format&fit=crop"
+            ],
+            "features": [
+                "إطلالة بحرية",
+                "شرفة واسعة",
+                "مصعد خاص",
+                "نادي صحي",
+                "أمن على مدار الساعة"
+            ],
+            "likes": 189,
+            "comments": [
+                {
+                    "user_id": "1",
+                    "text": "هل الشقة مفروشة؟",
+                    "date": "2025-02-10"
+                }
+            ]
+        },
+        {
+            "id": "3",
+            "title": "منزل عائلي فاخر",
+            "description": "منزل عائلي واسع في حي الروضة بالدمام، مناسب للعائلات الكبيرة ويتميز بتصميم فاخر وحديقة واسعة. يحتوي على مطبخ حديث وغرفة خادمة ومجلس رجال ونساء منفصل.",
+            "price": 2200000,
+            "location": "الدمام، حي الروضة",
+            "area": 420,
+            "bedrooms": 6,
+            "bathrooms": 4,
+            "garages": 2,
+            "type": "house",
+            "status": "sold",
+            "agent_id": "7",
+            "views": 2145,
+            "inquiries": 45,
+            "created_at": "2025-02-05",
+            "videos": [
+                "https://assets.mixkit.co/videos/preview/mixkit-interior-of-a-white-and-wooden-kitchen-4457-large.mp4"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1000&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=1000&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1600607687644-c7531e489ece?q=80&w=1000&auto=format&fit=crop"
+            ],
+            "features": [
+                "حديقة واسعة",
+                "مطبخ حديث",
+                "غرفة خادمة",
+                "مجلس رجال ونساء منفصل",
+                "قبو"
+            ],
+            "likes": 312,
+            "comments": [
+                {
+                    "user_id": "2",
+                    "text": "هل يوجد مدارس قريبة؟",
+                    "date": "2025-02-18"
+                },
+                {
+                    "user_id": "1",
+                    "text": "هل الحديقة مزروعة بالكامل؟",
+                    "date": "2025-02-22"
+                }
+            ]
+        },
+        {
+            "id": "4",
+            "title": "مكتب تجاري في برج المملكة",
+            "description": "مكتب تجاري فاخر في برج المملكة بالرياض، يتميز بموقع استراتيجي وإطلالة رائعة على المدينة. مناسب للشركات والمؤسسات الكبيرة ويتوفر به جميع الخدمات اللازمة.",
+            "price": 3800000,
+            "location": "الرياض، طريق الملك فهد",
+            "area": 250,
+            "bedrooms": 0,
+            "bathrooms": 2,
+            "garages": 3,
+            "type": "commercial",
+            "status": "inactive",
+            "agent_id": "5",
+            "views": 1056,
+            "inquiries": 22,
+            "created_at": "2025-02-01",
+            "videos": [
+                "https://assets.mixkit.co/videos/preview/mixkit-living-room-with-a-blue-sofa-and-a-wooden-table-4113-large.mp4"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1000&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=1000&auto=format&fit=crop"
+            ],
+            "features": [
+                "إطلالة بانورامية",
+                "جاكوزي",
+                "مسبح خاص",
+                "صالة استقبال فاخرة",
+                "مصعد خاص"
+            ],
+            "likes": 423,
+            "comments": [
+                {
+                    "user_id": "1",
+                    "text": "هل يمكن رؤية البنتهاوس هذا الأسبوع؟",
+                    "date": "2025-02-25"
+                }
+            ]
+        },
+        {
+            "id": "5",
+            "title": "فيلا مع مسبح في حي الياسمين",
+            "description": "فيلا فاخرة مع مسبح خاص في حي الياسمين بالرياض. تتميز بتصميم عصري وحديقة خلفية واسعة ومسبح خاص. مناسبة للعائلات الكبيرة وتتوفر بها جميع وسائل الراحة.",
+            "price": 3200000,
+            "location": "الرياض، حي الياسمين",
+            "area": 380,
+            "bedrooms": 5,
+            "bathrooms": 4,
+            "garages": 2,
+            "type": "villa",
+            "status": "active",
+            "agent_id": "5",
+            "views": 1789,
+            "inquiries": 38,
+            "created_at": "2025-01-25",
+            "videos": [
+                "https://assets.mixkit.co/videos/preview/mixkit-modern-living-room-interior-3505-large.mp4"
+            ],
+            "images": [
+                "https://images.unsplash.com/photo-1613977257363-707ba9348227?q=80&w=1000&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1613977257592-4a9a32f9141b?q=80&w=1000&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1613977257731-5f50b6585d50?q=80&w=1000&auto=format&fit=crop"
+            ],
+            "features": [
+                "حديقة خاصة",
+                "مسبح",
+                "موقف سيارات",
+                "نظام أمان متكامل",
+                "مطبخ مجهز",
+                "تكييف مركزي"
+            ],
+            "likes": 245,
+            "comments": [
+                {
+                    "user_id": "2",
+                    "text": "هل يمكن التفاوض على السعر؟",
+                    "date": "2025-02-15"
+                },
+                {
+                    "user_id": "1",
+                    "text": "فيلا رائعة، هل هي قريبة من المدارس؟",
+                    "date": "2025-02-20"
+                }
+            ]
+        }
+    ],
+    "agents": [
+        {
+            "id": "5",
+            "name": "محمد المسوق",
+            "email": "mohamed@example.com",
+            "password": "pbkdf2:sha256:150000$MnOPqRsT$d9f44e7b3a9c7c8f8f3a8e7d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0",
+            "phone": "0501234567",
+            "company_id": "1",
+            "title": "مستشار عقاري أول",
+            "role": "agent",
+            "listings": [
+                "1",
+                "4"
+            ],
+            "rating": 4.8,
+            "reviews": 32,
+            "bio": "خبرة 10 سنوات في تسويق العقارات الفاخرة في الرياض والخبر",
+            "image": "https://randomuser.me/api/portraits/men/32.jpg",
+            "created_at": "2024-12-01"
+        },
+        {
+            "id": "6",
+            "name": "سارة العقارية",
+            "email": "sara_agent@example.com",
+            "password": "pbkdf2:sha256:150000$UvWxYzAb$d9f44e7b3a9c7c8f8f3a8e7d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0",
+            "phone": "0567891234",
+            "company_id": "2",
+            "title": "مستشارة عقارية",
+            "role": "agent",
+            "listings": [
+                "2"
+            ],
+            "rating": 4.6,
+            "reviews": 28,
+            "bio": "متخصصة في العقارات ذات الإطلالات البحرية في جدة",
+            "image": "https://randomuser.me/api/portraits/women/44.jpg",
+            "created_at": "2024-12-10"
+        },
+        {
+            "id": "7",
+            "name": "خالد العقاري",
+            "email": "khaled@example.com",
+            "password": "pbkdf2:sha256:150000$CdEfGhIj$d9f44e7b3a9c7c8f8f3a8e7d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0",
+            "phone": "0512345678",
+            "company_id": "1",
+            "title": "خبير عقاري",
+            "role": "agent",
+            "listings": [
+                "3"
+            ],
+            "rating": 4.9,
+            "reviews": 45,
+            "bio": "خبير في سوق العقارات السكنية في المنطقة الشرقية",
+            "image": "https://randomuser.me/api/portraits/men/67.jpg",
+            "created_at": "2024-12-15"
+        }
+    ],
+    "companies": [
+        {
+            "id": "1",
+            "name": "شركة الرياض للتطوير العقاري",
+            "email": "info@riyadh-dev.com",
+            "phone": "0112345678",
+            "address": "الرياض، طريق الملك فهد",
+            "logo": "https://via.placeholder.com/150?text=Riyadh+Dev",
+            "website": "www.riyadh-dev.com",
+            "founded": "2010",
+            "description": "شركة رائدة في مجال التطوير العقاري في المملكة العربية السعودية",
+            "agents": [
+                "5",
+                "7"
+            ],
+            "properties": [
+                "1",
+                "3",
+                "4",
+                "5"
+            ],
+            "created_at": "2024-01-01"
+        },
+        {
+            "id": "2",
+            "name": "جدة للعقارات المتميزة",
+            "email": "contact@jeddah-properties.com",
+            "phone": "0126789012",
+            "address": "جدة، شارع التحلية",
+            "logo": "https://via.placeholder.com/150?text=Jeddah+Properties",
+            "website": "www.jeddah-properties.com",
+            "founded": "2015",
+            "description": "متخصصون في العقارات الفاخرة والمميزة في مدينة جدة",
+            "agents": [
+                "6"
+            ],
+            "properties": [
+                "2"
+            ],
+            "created_at": "2024-03-15"
+        }
+    ],
+    "appointments": [
+        {
+            "id": "appt1",
+            "agent_id": "agent1",
+            "property_id": "prop1",
+            "date": "2025-03-05T14:30:00",
+            "client_name": "أحمد محمد",
+            "client_phone": "0501234567",
+            "status": "scheduled",
+            "notes": "العميل مهتم بمعرفة المزيد عن خيارات التمويل"
+        },
+        {
+            "id": "appt2",
+            "agent_id": "agent2",
+            "property_id": "prop2",
+            "date": "2025-03-07T10:00:00",
+            "client_name": "فاطمة علي",
+            "client_phone": "0557654321",
+            "status": "completed",
+            "notes": "تم تقديم العرض للعميل وأبدى اهتمامًا كبيرًا"
+        },
+        {
+            "id": "appt3",
+            "agent_id": "agent1",
+            "property_id": "prop3",
+            "date": "2025-03-10T16:00:00",
+            "client_name": "خالد عبدالله",
+            "client_phone": "0559876543",
+            "status": "cancelled",
+            "notes": "تم إلغاء الموعد بسبب ظروف طارئة"
+        },
+        {
+            "id": "appt4",
+            "agent_id": "agent3",
+            "property_id": "prop4",
+            "date": "2025-03-12T11:30:00",
+            "client_name": "نورة ناصر",
+            "client_phone": "0503456789",
+            "status": "scheduled",
+            "notes": "زيارة ثانية للعقار"
+        },
+        {
+            "id": "appt5",
+            "agent_id": "agent2",
+            "property_id": "prop5",
+            "date": "2025-03-02T15:00:00",
+            "client_name": "سعد محمد",
+            "client_phone": "0556789012",
+            "status": "completed",
+            "notes": "تم توقيع عقد مبدئي"
+        },
+        {
+            "id": "appt6",
+            "client_name": "سارة عبدالله",
+            "client_phone": "",
+            "property_id": "1",
+            "agent_id": "5",
+            "date": "2025-03-03",
+            "time": "10:00",
+            "status": "pending",
+            "notes": "",
+            "created_at": "2025-03-01"
+        }
+    ],
+    "settings": {
+        "site_title": "تيك توك العقاري",
+        "contact_email": "info@tiknew.com",
+        "google_maps_api": "",
+        "currency": "SAR",
+        "language": "ar",
+        "primary_color": "#0d6efd",
+        "secondary_color": "#324c62",
+        "layout_style": "compact",
+        "font_size": "medium",
+        "email_new_property": true,
+        "email_appointment": true,
+        "email_price_change": false,
+        "app_messages": true,
+        "app_appointment_reminder": true,
+        "reminder_time": "3h"
+    },
+    "reviews": [
+        {
+            "id": "101",
+            "property_id": "2",
+            "client_id": "1",
+            "rating": 4.5,
+            "comment": "شقة رائعة بإطلالة مميزة، والموقع ممتاز قريب من جميع الخدمات.",
+            "date": "2025-02-20"
+        },
+        {
+            "id": "102",
+            "property_id": "1",
+            "client_id": "2",
+            "rating": 5.0,
+            "comment": "فيلا فخمة جداً وتستحق السعر، التصميم عصري والمساحات واسعة.",
+            "date": "2025-02-15"
+        }
+    ],
+    "messages": [
+        {
+            "id": "201",
+            "sender_id": "1",
+            "receiver_id": "5",
+            "property_id": "1",
+            "text": "مرحباً، أود الاستفسار عن إمكانية زيارة الفيلا هذا الأسبوع.",
+            "date": "2025-02-22",
+            "time": "14:30",
+            "read": true,
+            "is_read": false
+        },
+        {
+            "id": "202",
+            "sender_id": "5",
+            "receiver_id": "1",
+            "property_id": "1",
+            "text": "أهلاً بك، نعم يمكنك زيارة الفيلا يوم الخميس القادم. هل يناسبك الوقت؟",
+            "date": "2025-02-22",
+            "time": "15:45",
+            "read": false,
+            "is_read": false
+        },
+        {
+            "id": "203",
+            "sender_id": "2",
+            "receiver_id": "6",
+            "property_id": "2",
+            "text": "هل الشقة متاحة للإيجار أم للبيع فقط؟",
+            "date": "2025-02-23",
+            "time": "10:15",
+            "read": true,
+            "is_read": false
+        },
+        {
+            "id": "204",
+            "sender_id": "6",
+            "receiver_id": "2",
+            "property_id": "2",
+            "text": "الشقة متاحة للبيع فقط حالياً، ولكن يمكننا البحث لك عن خيارات مشابهة للإيجار إذا كنت مهتماً.",
+            "date": "2025-02-23",
+            "time": "11:30",
+            "read": true,
+            "is_read": false
+        },
+        {
+            "id": "205",
+            "sender_id": "3",
+            "receiver_id": "1",
+            "text": "نعم",
+            "date": "2025-02-27",
+            "time": "22:29",
+            "read": false,
+            "is_read": false
+        }
+    ]
+}

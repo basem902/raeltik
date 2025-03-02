@@ -1,0 +1,830 @@
+{% extends "base.html" %}
+
+{% block title %}تقييم الأداء - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important; /* إضافة مساحة في الأسفل للشريط السفلي */
+    }
+    
+    .performance-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .page-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .card {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        margin-bottom: 25px;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 20px;
+        transition: color 0.3s ease;
+    }
+    
+    .rating-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 30px 20px;
+    }
+    
+    .rating-score {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .rating-value {
+        font-size: 48px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 10px;
+    }
+    
+    .rating-stars {
+        display: flex;
+        margin-bottom: 10px;
+    }
+    
+    .rating-star {
+        color: var(--primary-color);
+        font-size: 24px;
+        margin: 0 2px;
+    }
+    
+    .rating-count {
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+    
+    .rating-distribution {
+        flex: 1;
+        max-width: 500px;
+        margin-right: 50px;
+    }
+    
+    .rating-bar {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .rating-label {
+        flex: 0 0 60px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .rating-label-text {
+        margin-left: 5px;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .rating-progress {
+        flex: 1;
+        height: 8px;
+        background-color: var(--border-color);
+        border-radius: 4px;
+        margin: 0 15px;
+        overflow: hidden;
+    }
+    
+    .rating-progress-bar {
+        height: 100%;
+        background-color: var(--primary-color);
+        border-radius: 4px;
+    }
+    
+    .rating-percentage {
+        flex: 0 0 40px;
+        font-size: 14px;
+        color: var(--text-secondary);
+        text-align: left;
+    }
+    
+    .comments-list {
+        margin-top: 20px;
+    }
+    
+    .comment-item {
+        display: flex;
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .comment-item:last-child {
+        border-bottom: none;
+    }
+    
+    .comment-avatar {
+        flex: 0 0 60px;
+        margin-left: 20px;
+    }
+    
+    .comment-avatar img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    .comment-content {
+        flex: 1;
+    }
+    
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .comment-name {
+        font-weight: 700;
+        color: var(--text-color);
+    }
+    
+    .comment-date {
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
+    
+    .comment-rating {
+        display: flex;
+        margin-bottom: 10px;
+    }
+    
+    .comment-star {
+        color: var(--primary-color);
+        font-size: 14px;
+        margin-left: 2px;
+    }
+    
+    .comment-text {
+        color: var(--text-color);
+        line-height: 1.5;
+    }
+    
+    .comment-property {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-top: 10px;
+    }
+    
+    .performance-comparison {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        margin-top: 30px;
+    }
+    
+    .comparison-chart-container {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .comparison-chart-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 20px;
+        transition: color 0.3s ease;
+    }
+    
+    .comparison-chart {
+        height: 300px;
+    }
+    
+    .recommendations-container {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        margin-top: 30px;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .recommendations-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 20px;
+        transition: color 0.3s ease;
+    }
+    
+    .recommendation-item {
+        display: flex;
+        align-items: flex-start;
+        padding: 15px;
+        border-bottom: 1px solid var(--border-color);
+        transition: background-color 0.3s ease;
+    }
+    
+    .recommendation-item:last-child {
+        border-bottom: none;
+    }
+    
+    .recommendation-icon {
+        flex: 0 0 40px;
+        height: 40px;
+        background-color: rgba(212, 175, 55, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-color);
+        margin-left: 15px;
+    }
+    
+    .recommendation-content {
+        flex: 1;
+    }
+    
+    .recommendation-title {
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    .recommendation-text {
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.5;
+        transition: color 0.3s ease;
+    }
+    
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+    
+    .stat-card {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stat-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+    }
+    
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+    }
+    
+    .stat-change {
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .stat-change i {
+        margin-left: 5px;
+    }
+    
+    .positive {
+        color: var(--success-color);
+    }
+    
+    .negative {
+        color: var(--danger-color);
+    }
+    
+    .neutral {
+        color: var(--text-secondary);
+    }
+    
+    @media (max-width: 768px) {
+        .rating-summary {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .rating-score {
+            margin-bottom: 30px;
+        }
+        
+        .rating-distribution {
+            width: 100%;
+            margin-right: 0;
+        }
+        
+        .performance-comparison {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="performance-container">
+    <div class="page-header">
+        <h1 class="page-title">تقييم الأداء</h1>
+    </div>
+    
+    <!-- الإحصائيات السريعة -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-title">متوسط التقييم</div>
+            <div class="stat-value">4.7</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                0.3 منذ الشهر الماضي
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">عدد التقييمات</div>
+            <div class="stat-value">128</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                24 منذ الشهر الماضي
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">معدل الاستجابة</div>
+            <div class="stat-value">92%</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                5% منذ الشهر الماضي
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">ترتيبك بين المسوقين</div>
+            <div class="stat-value">12 / 156</div>
+            <div class="stat-change positive">
+                <i class="fas fa-arrow-up"></i>
+                تقدم 3 مراكز
+            </div>
+        </div>
+    </div>
+    
+    <!-- ملخص التقييمات -->
+    <div class="card">
+        <h2 class="card-title">ملخص التقييمات</h2>
+        <div class="rating-summary">
+            <div class="rating-score">
+                <div class="rating-value">4.7</div>
+                <div class="rating-stars">
+                    <i class="fas fa-star rating-star"></i>
+                    <i class="fas fa-star rating-star"></i>
+                    <i class="fas fa-star rating-star"></i>
+                    <i class="fas fa-star rating-star"></i>
+                    <i class="fas fa-star-half-alt rating-star"></i>
+                </div>
+                <div class="rating-count">128 تقييم</div>
+            </div>
+            <div class="rating-distribution">
+                <div class="rating-bar">
+                    <div class="rating-label">
+                        <i class="fas fa-star rating-star"></i>
+                        <span class="rating-label-text">5</span>
+                    </div>
+                    <div class="rating-progress">
+                        <div class="rating-progress-bar" style="width: 75%;"></div>
+                    </div>
+                    <div class="rating-percentage">75%</div>
+                </div>
+                <div class="rating-bar">
+                    <div class="rating-label">
+                        <i class="fas fa-star rating-star"></i>
+                        <span class="rating-label-text">4</span>
+                    </div>
+                    <div class="rating-progress">
+                        <div class="rating-progress-bar" style="width: 20%;"></div>
+                    </div>
+                    <div class="rating-percentage">20%</div>
+                </div>
+                <div class="rating-bar">
+                    <div class="rating-label">
+                        <i class="fas fa-star rating-star"></i>
+                        <span class="rating-label-text">3</span>
+                    </div>
+                    <div class="rating-progress">
+                        <div class="rating-progress-bar" style="width: 3%;"></div>
+                    </div>
+                    <div class="rating-percentage">3%</div>
+                </div>
+                <div class="rating-bar">
+                    <div class="rating-label">
+                        <i class="fas fa-star rating-star"></i>
+                        <span class="rating-label-text">2</span>
+                    </div>
+                    <div class="rating-progress">
+                        <div class="rating-progress-bar" style="width: 1%;"></div>
+                    </div>
+                    <div class="rating-percentage">1%</div>
+                </div>
+                <div class="rating-bar">
+                    <div class="rating-label">
+                        <i class="fas fa-star rating-star"></i>
+                        <span class="rating-label-text">1</span>
+                    </div>
+                    <div class="rating-progress">
+                        <div class="rating-progress-bar" style="width: 1%;"></div>
+                    </div>
+                    <div class="rating-percentage">1%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- قائمة التعليقات والملاحظات -->
+    <div class="card">
+        <h2 class="card-title">التعليقات والملاحظات</h2>
+        <div class="comments-list">
+            <div class="comment-item">
+                <div class="comment-avatar">
+                    <img src="{{ url_for('static', filename='images/avatars/avatar1.jpg') }}" alt="صورة المستخدم">
+                </div>
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <div class="comment-name">أحمد محمد</div>
+                        <div class="comment-date">منذ 3 أيام</div>
+                    </div>
+                    <div class="comment-rating">
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="fas fa-star comment-star"></i>
+                    </div>
+                    <div class="comment-text">
+                        كان المسوق متعاوناً جداً وساعدني في العثور على العقار المناسب بسرعة. أسعار معقولة وخدمة ممتازة.
+                    </div>
+                    <div class="comment-property">
+                        <i class="fas fa-home"></i> فيلا في الرياض - حي النرجس
+                    </div>
+                </div>
+            </div>
+            <div class="comment-item">
+                <div class="comment-avatar">
+                    <img src="{{ url_for('static', filename='images/avatars/avatar2.jpg') }}" alt="صورة المستخدم">
+                </div>
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <div class="comment-name">سارة عبدالله</div>
+                        <div class="comment-date">منذ أسبوع</div>
+                    </div>
+                    <div class="comment-rating">
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="far fa-star comment-star"></i>
+                    </div>
+                    <div class="comment-text">
+                        استجابة سريعة وتعامل محترف. كنت أتمنى المزيد من الخيارات في المنطقة التي أبحث فيها.
+                    </div>
+                    <div class="comment-property">
+                        <i class="fas fa-building"></i> شقة في جدة - حي الشاطئ
+                    </div>
+                </div>
+            </div>
+            <div class="comment-item">
+                <div class="comment-avatar">
+                    <img src="{{ url_for('static', filename='images/avatars/avatar3.jpg') }}" alt="صورة المستخدم">
+                </div>
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <div class="comment-name">خالد العتيبي</div>
+                        <div class="comment-date">منذ أسبوعين</div>
+                    </div>
+                    <div class="comment-rating">
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="fas fa-star comment-star"></i>
+                        <i class="fas fa-star comment-star"></i>
+                    </div>
+                    <div class="comment-text">
+                        تجربة ممتازة من البداية إلى النهاية. المسوق كان متفهماً لاحتياجاتي وقدم لي خيارات متنوعة تناسب ميزانيتي.
+                    </div>
+                    <div class="comment-property">
+                        <i class="fas fa-home"></i> فيلا في الدمام - حي الشاطئ
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- مقارنة الأداء مع متوسط المسوقين -->
+    <div class="card">
+        <h2 class="card-title">مقارنة الأداء مع متوسط المسوقين</h2>
+        <div class="performance-comparison">
+            <div class="comparison-chart-container">
+                <h3 class="comparison-chart-title">معدل الاستجابة</h3>
+                <canvas id="responseRateChart" class="comparison-chart"></canvas>
+            </div>
+            <div class="comparison-chart-container">
+                <h3 class="comparison-chart-title">متوسط التقييم</h3>
+                <canvas id="ratingChart" class="comparison-chart"></canvas>
+            </div>
+            <div class="comparison-chart-container">
+                <h3 class="comparison-chart-title">عدد العقارات المباعة</h3>
+                <canvas id="propertiesSoldChart" class="comparison-chart"></canvas>
+            </div>
+            <div class="comparison-chart-container">
+                <h3 class="comparison-chart-title">متوسط وقت إتمام الصفقة</h3>
+                <canvas id="dealTimeChart" class="comparison-chart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- توصيات لتحسين الأداء -->
+    <div class="recommendations-container">
+        <h2 class="recommendations-title">توصيات لتحسين الأداء</h2>
+        <div class="recommendation-item">
+            <div class="recommendation-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="recommendation-content">
+                <h3 class="recommendation-title">تحسين وقت الاستجابة</h3>
+                <p class="recommendation-text">
+                    يمكنك تحسين وقت الاستجابة للاستفسارات بنسبة 15% عن طريق استخدام الردود السريعة المجهزة مسبقاً.
+                </p>
+            </div>
+        </div>
+        <div class="recommendation-item">
+            <div class="recommendation-icon">
+                <i class="fas fa-camera"></i>
+            </div>
+            <div class="recommendation-content">
+                <h3 class="recommendation-title">تحسين جودة الصور</h3>
+                <p class="recommendation-text">
+                    العقارات ذات الصور عالية الجودة تحصل على مشاهدات أكثر بنسبة 40%. حاول استخدام إضاءة أفضل وزوايا متنوعة.
+                </p>
+            </div>
+        </div>
+        <div class="recommendation-item">
+            <div class="recommendation-icon">
+                <i class="fas fa-tags"></i>
+            </div>
+            <div class="recommendation-content">
+                <h3 class="recommendation-title">تحسين أوصاف العقارات</h3>
+                <p class="recommendation-text">
+                    أضف المزيد من التفاصيل في أوصاف العقارات، مثل المميزات الفريدة والمرافق القريبة والمزايا التنافسية.
+                </p>
+            </div>
+        </div>
+        <div class="recommendation-item">
+            <div class="recommendation-icon">
+                <i class="fas fa-video"></i>
+            </div>
+            <div class="recommendation-content">
+                <h3 class="recommendation-title">استخدام الفيديو بشكل أكبر</h3>
+                <p class="recommendation-text">
+                    العقارات التي تحتوي على فيديوهات تحصل على استفسارات أكثر بنسبة 60%. حاول إضافة جولات افتراضية لجميع عقاراتك.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // تهيئة الألوان حسب وضع الألوان (الوضع الداكن أو الفاتح)
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        const textColor = isDarkMode ? '#ffffff' : '#333333';
+        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        
+        // تكوين مشترك للرسوم البيانية
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor,
+                        font: {
+                            family: 'Cairo'
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: gridColor
+                    },
+                    ticks: {
+                        color: textColor,
+                        font: {
+                            family: 'Cairo'
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        color: gridColor
+                    },
+                    ticks: {
+                        color: textColor,
+                        font: {
+                            family: 'Cairo'
+                        }
+                    }
+                }
+            }
+        };
+        
+        // رسم بياني لمعدل الاستجابة
+        const responseRateCtx = document.getElementById('responseRateChart').getContext('2d');
+        const responseRateChart = new Chart(responseRateCtx, {
+            type: 'line',
+            data: {
+                labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                datasets: [
+                    {
+                        label: 'معدل استجابتك',
+                        data: [85, 87, 88, 90, 92, 92],
+                        borderColor: '#d4af37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'متوسط المسوقين',
+                        data: [80, 82, 81, 83, 84, 85],
+                        borderColor: '#808080',
+                        backgroundColor: 'rgba(128, 128, 128, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    ...commonOptions.plugins,
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // رسم بياني لمتوسط التقييم
+        const ratingCtx = document.getElementById('ratingChart').getContext('2d');
+        const ratingChart = new Chart(ratingCtx, {
+            type: 'line',
+            data: {
+                labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                datasets: [
+                    {
+                        label: 'تقييمك',
+                        data: [4.2, 4.3, 4.4, 4.5, 4.6, 4.7],
+                        borderColor: '#d4af37',
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'متوسط المسوقين',
+                        data: [4.0, 4.1, 4.1, 4.2, 4.2, 4.3],
+                        borderColor: '#808080',
+                        backgroundColor: 'rgba(128, 128, 128, 0.1)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: commonOptions
+        });
+        
+        // رسم بياني لعدد العقارات المباعة
+        const propertiesSoldCtx = document.getElementById('propertiesSoldChart').getContext('2d');
+        const propertiesSoldChart = new Chart(propertiesSoldCtx, {
+            type: 'bar',
+            data: {
+                labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                datasets: [
+                    {
+                        label: 'عقاراتك المباعة',
+                        data: [5, 7, 6, 8, 10, 12],
+                        backgroundColor: 'rgba(212, 175, 55, 0.7)',
+                        borderColor: '#d4af37',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'متوسط المسوقين',
+                        data: [4, 5, 5, 6, 7, 8],
+                        backgroundColor: 'rgba(128, 128, 128, 0.7)',
+                        borderColor: '#808080',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: commonOptions
+        });
+        
+        // رسم بياني لمتوسط وقت إتمام الصفقة
+        const dealTimeCtx = document.getElementById('dealTimeChart').getContext('2d');
+        const dealTimeChart = new Chart(dealTimeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                datasets: [
+                    {
+                        label: 'متوسط وقتك (بالأيام)',
+                        data: [45, 42, 40, 38, 35, 32],
+                        backgroundColor: 'rgba(212, 175, 55, 0.7)',
+                        borderColor: '#d4af37',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'متوسط المسوقين (بالأيام)',
+                        data: [50, 48, 47, 45, 44, 42],
+                        backgroundColor: 'rgba(128, 128, 128, 0.7)',
+                        borderColor: '#808080',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: commonOptions
+        });
+        
+        // استمع لتغييرات وضع الألوان (الداكن/الفاتح) وتحديث الرسوم البيانية
+        document.addEventListener('themeChanged', function(e) {
+            const isDarkMode = e.detail.isDarkMode;
+            const textColor = isDarkMode ? '#ffffff' : '#333333';
+            const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            
+            // تحديث الألوان في جميع الرسوم البيانية
+            const charts = [responseRateChart, ratingChart, propertiesSoldChart, dealTimeChart];
+            
+            charts.forEach(chart => {
+                chart.options.scales.x.grid.color = gridColor;
+                chart.options.scales.x.ticks.color = textColor;
+                chart.options.scales.y.grid.color = gridColor;
+                chart.options.scales.y.ticks.color = textColor;
+                chart.options.plugins.legend.labels.color = textColor;
+                chart.update();
+            });
+        });
+    });
+</script>
+{% endblock %}

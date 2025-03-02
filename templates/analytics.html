@@ -1,0 +1,488 @@
+{% extends "base.html" %}
+
+{% block title %}تتبع الإعلانات - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css">
+<style>
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important;
+    }
+    
+    .analytics-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .back-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--card-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-color);
+        font-size: 18px;
+        margin-left: 15px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .page-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-icon {
+        font-size: 32px;
+        margin-bottom: 15px;
+        color: var(--primary-color);
+    }
+    
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: var(--text-color);
+    }
+    
+    .stat-label {
+        font-size: 16px;
+        color: var(--text-secondary);
+    }
+    
+    .chart-container {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+    }
+    
+    .chart-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--text-color);
+    }
+    
+    .charts-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .property-performance {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+    }
+    
+    .property-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .property-table th, .property-table td {
+        padding: 12px 15px;
+        text-align: right;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .property-table th {
+        font-weight: 600;
+        color: var(--text-color);
+        background-color: var(--table-header-bg);
+    }
+    
+    .property-table tr:hover {
+        background-color: var(--hover-bg);
+    }
+    
+    .property-table .views-bar, .property-table .inquiries-bar {
+        height: 8px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        width: 100%;
+    }
+    
+    .property-table .views-progress {
+        height: 100%;
+        background-color: #4CAF50;
+        border-radius: 4px;
+    }
+    
+    .property-table .inquiries-progress {
+        height: 100%;
+        background-color: #2196F3;
+        border-radius: 4px;
+    }
+    
+    @media (max-width: 768px) {
+        .charts-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .property-table {
+            font-size: 14px;
+        }
+        
+        .property-table th, .property-table td {
+            padding: 8px 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-container">
+    <div class="page-header">
+        <a href="{{ url_for('agent_properties') }}" class="back-button">
+            <i class="fas fa-arrow-right"></i>
+        </a>
+        <h1 class="page-title">تتبع الإعلانات</h1>
+    </div>
+    
+    <!-- بطاقات الإحصائيات -->
+    <div class="stats-cards">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="stat-value">{{ total_properties }}</div>
+            <div class="stat-label">إجمالي العقارات</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="stat-value">{{ total_views }}</div>
+            <div class="stat-label">إجمالي المشاهدات</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <div class="stat-value">{{ total_inquiries }}</div>
+            <div class="stat-label">إجمالي الاستفسارات</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-value"><span data-conversion-rate="{{ (total_inquiries / (total_views if total_views > 0 else 1) * 100)|float|round(1) }}">0</span>%</div>
+            <div class="stat-label">معدل التحويل</div>
+        </div>
+    </div>
+    
+    <!-- الرسوم البيانية -->
+    <div class="charts-row">
+        <div class="chart-container">
+            <h2 class="chart-title">المشاهدات حسب العقار</h2>
+            <canvas id="viewsChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h2 class="chart-title">الاستفسارات حسب العقار</h2>
+            <canvas id="inquiriesChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="charts-row">
+        <div class="chart-container">
+            <h2 class="chart-title">الأداء حسب نوع العقار</h2>
+            <canvas id="propertyTypeChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <h2 class="chart-title">تحليل الأداء</h2>
+            <canvas id="performanceChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- جدول أداء العقارات -->
+    <div class="property-performance">
+        <h2 class="chart-title">أداء العقارات</h2>
+        
+        <div class="table-responsive">
+            <table class="property-table">
+                <thead>
+                    <tr>
+                        <th>العقار</th>
+                        <th>النوع</th>
+                        <th>الحالة</th>
+                        <th>المشاهدات</th>
+                        <th>الاستفسارات</th>
+                        <th>معدل التحويل</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for property in properties %}
+                    <tr>
+                        <td>{{ property.title }}</td>
+                        <td>
+                            {% if property.type == 'villa' %}
+                                فيلا
+                            {% elif property.type == 'apartment' %}
+                                شقة
+                            {% elif property.type == 'house' %}
+                                منزل
+                            {% elif property.type == 'commercial' %}
+                                تجاري
+                            {% else %}
+                                {{ property.type }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if property.status == 'active' %}
+                                <span class="badge bg-success">نشط</span>
+                            {% elif property.status == 'pending' %}
+                                <span class="badge bg-warning">قيد المراجعة</span>
+                            {% elif property.status == 'sold' %}
+                                <span class="badge bg-info">تم البيع</span>
+                            {% elif property.status == 'inactive' %}
+                                <span class="badge bg-secondary">غير نشط</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ property.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="me-2">{{ property.views }}</span>
+                                <div class="views-bar">
+                                    <div class="views-progress" data-width="{{ (property.views / (total_views if total_views > 0 else 1) * 100)|int }}" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="me-2">{{ property.inquiries }}</span>
+                                <div class="inquiries-bar">
+                                    <div class="inquiries-progress" data-width="{{ (property.inquiries / (total_inquiries if total_inquiries > 0 else 1) * 100)|int }}" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span data-conversion="{{ (property.inquiries / (property.views if property.views > 0 else 1) * 100)|float|round(1) }}">0</span>%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // تهيئة البيانات للرسوم البيانية
+        const propertyViews = JSON.parse('{{ property_views|tojson|safe }}');
+        const propertyInquiries = JSON.parse('{{ property_inquiries|tojson|safe }}');
+        const propertyTypes = JSON.parse('{{ property_types|tojson|safe }}');
+        
+        // ألوان للرسوم البيانية
+        const chartColors = [
+            '#4CAF50', '#2196F3', '#FFC107', '#E91E63', '#9C27B0',
+            '#00BCD4', '#FF9800', '#795548', '#607D8B', '#3F51B5'
+        ];
+        
+        // رسم بياني للمشاهدات
+        const viewsCtx = document.getElementById('viewsChart').getContext('2d');
+        new Chart(viewsCtx, {
+            type: 'bar',
+            data: {
+                labels: propertyViews.map(item => item.name),
+                datasets: [{
+                    label: 'المشاهدات',
+                    data: propertyViews.map(item => item.views),
+                    backgroundColor: chartColors,
+                    borderWidth: 0,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // رسم بياني للاستفسارات
+        const inquiriesCtx = document.getElementById('inquiriesChart').getContext('2d');
+        new Chart(inquiriesCtx, {
+            type: 'bar',
+            data: {
+                labels: propertyInquiries.map(item => item.name),
+                datasets: [{
+                    label: 'الاستفسارات',
+                    data: propertyInquiries.map(item => item.inquiries),
+                    backgroundColor: chartColors,
+                    borderWidth: 0,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // رسم بياني لأنواع العقارات
+        const propertyTypeCtx = document.getElementById('propertyTypeChart').getContext('2d');
+        const propertyTypeLabels = Object.keys(propertyTypes).map(type => {
+            if (type === 'villa') return 'فيلا';
+            if (type === 'apartment') return 'شقة';
+            if (type === 'house') return 'منزل';
+            if (type === 'commercial') return 'تجاري';
+            return type;
+        });
+        
+        new Chart(propertyTypeCtx, {
+            type: 'pie',
+            data: {
+                labels: propertyTypeLabels,
+                datasets: [{
+                    data: Object.values(propertyTypes).map(item => item.count),
+                    backgroundColor: chartColors,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+        
+        // بيانات الأداء - تعريف المتغيرات بشكل منفصل لتجنب أخطاء التحليل
+        const totalViewsValue = {{ total_views|default(0)|int }};
+        const totalInquiriesValue = {{ total_inquiries|default(0)|int }};
+        const conversionRateValue = {{ (total_inquiries / (total_views if total_views > 0 else 1) * 100)|float|round(1)|default(0) }};
+        const totalLikesValue = {{ properties|sum(attribute='likes')|default(0)|int }};
+        
+        // كائن بيانات الأداء
+        const performanceData = {
+            totalViews: totalViewsValue,
+            totalInquiries: totalInquiriesValue,
+            conversionRate: conversionRateValue,
+            totalLikes: totalLikesValue
+        };
+        
+        // رسم بياني للأداء
+        const performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(performanceCtx, {
+            type: 'radar',
+            data: {
+                labels: ['المشاهدات', 'الاستفسارات', 'معدل التحويل', 'الإعجابات'],
+                datasets: [{
+                    label: 'أداء العقارات',
+                    data: [
+                        performanceData.totalViews,
+                        performanceData.totalInquiries,
+                        performanceData.conversionRate,
+                        performanceData.totalLikes
+                    ],
+                    backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                    borderColor: '#4CAF50',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#4CAF50'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    r: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // تطبيق قيم العرض على شرائط التقدم
+        document.querySelectorAll('.views-progress').forEach(function(el) {
+            el.style.width = el.getAttribute('data-width') + '%';
+        });
+        
+        document.querySelectorAll('.inquiries-progress').forEach(function(el) {
+            el.style.width = el.getAttribute('data-width') + '%';
+        });
+        
+        // تطبيق قيم التحويل
+        document.querySelectorAll('[data-conversion]').forEach(function(el) {
+            el.textContent = el.getAttribute('data-conversion');
+        });
+        
+        // تطبيق قيم معدل التحويل
+        document.querySelectorAll('[data-conversion-rate]').forEach(function(el) {
+            el.textContent = el.getAttribute('data-conversion-rate');
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,802 @@
+{% extends "base.html" %}
+
+{% block title %}المحادثة - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        padding-bottom: 120px !important; /* زيادة المساحة في الأسفل للشريط السفلي وصندوق الإدخال */
+    }
+    
+    .chat-container {
+        height: calc(100vh - 120px);
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 120px;
+        position: relative;
+    }
+    
+    .chat-header {
+        padding: 15px;
+        background-color: var(--card-bg);
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+    }
+    
+    .back-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--action-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-secondary);
+        font-size: 16px;
+        margin-left: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .chat-user {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+    }
+    
+    .chat-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-left: 10px;
+        border: 2px solid var(--primary-color);
+    }
+    
+    .chat-user-info {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .chat-user-name {
+        font-family: 'Cairo', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+    
+    .chat-user-status {
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+    
+    .chat-actions {
+        display: flex;
+    }
+    
+    .chat-action {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--action-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-secondary);
+        font-size: 16px;
+        margin-right: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .chat-action:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .chat-body {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 15px;
+        padding-bottom: 80px; /* إضافة مساحة للتمرير تحت آخر رسالة */
+    }
+    
+    .message {
+        max-width: 70%;
+        padding: 10px 15px;
+        border-radius: 18px;
+        margin-bottom: 15px;
+        position: relative;
+        line-height: 1.5;
+        font-size: 14px;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message-received {
+        align-self: flex-start;
+        background-color: var(--message-received-bg);
+        color: var(--text-color);
+        border-bottom-right-radius: 4px;
+    }
+    
+    .message-sent {
+        align-self: flex-end;
+        background-color: var(--primary-color);
+        color: white;
+        border-bottom-left-radius: 4px;
+    }
+    
+    .message-time {
+        font-size: 10px;
+        position: absolute;
+        bottom: 5px;
+        left: 15px;
+        opacity: 0.7;
+    }
+    
+    .message-sent .message-time {
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .message-received .message-time {
+        color: var(--text-secondary);
+    }
+    
+    .message-date {
+        align-self: center;
+        font-size: 12px;
+        color: var(--text-secondary);
+        background-color: var(--date-bg);
+        padding: 5px 15px;
+        border-radius: 15px;
+        margin: 10px 0;
+    }
+    
+    .property-card {
+        display: flex;
+        background-color: var(--card-bg);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .property-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+    }
+    
+    .property-info {
+        padding: 10px;
+        flex-grow: 1;
+    }
+    
+    .property-title {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 5px;
+        color: var(--text-color);
+    }
+    
+    .property-price {
+        font-size: 12px;
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .property-location {
+        font-size: 11px;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+    }
+    
+    .property-location i {
+        margin-left: 5px;
+        font-size: 10px;
+    }
+    
+    .chat-footer {
+        position: fixed;
+        bottom: 60px; /* ضبط المسافة فوق شريط التنقل السفلي */
+        left: 0;
+        right: 0;
+        background-color: var(--card-bg);
+        padding: 10px 15px;
+        border-top: 1px solid var(--border-color);
+        z-index: 999;
+        width: 100%;
+    }
+    
+    .chat-input-container {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        background-color: var(--input-bg);
+        border-radius: 25px;
+        padding: 5px 15px;
+    }
+    
+    .chat-input-action {
+        color: var(--text-secondary);
+        font-size: 18px;
+        padding: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .chat-input-action:hover {
+        color: var(--primary-color);
+    }
+    
+    .chat-input {
+        flex-grow: 1;
+        border: none;
+        background: transparent;
+        padding: 10px;
+        font-size: 14px;
+        color: var(--text-color);
+        outline: none;
+    }
+    
+    .chat-input::placeholder {
+        color: var(--text-secondary);
+    }
+    
+    .chat-send {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 18px;
+        margin-right: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .chat-send:hover {
+        background-color: #c09c31;
+    }
+    
+    /* إضافة أنماط للصور والموقع */
+    .message-image {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 10px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    
+    .message-image:hover {
+        transform: scale(1.05);
+    }
+    
+    .message-location {
+        width: 200px;
+        height: 150px;
+        border-radius: 10px;
+        margin-bottom: 5px;
+        background-color: #f1f1f1;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .location-map {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .location-pin {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: var(--primary-color);
+        font-size: 24px;
+        text-shadow: 0 0 3px rgba(0,0,0,0.5);
+    }
+    
+    .location-address {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0,0,0,0.7);
+        color: white;
+        padding: 5px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* أنماط للنوافذ المنبثقة */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .modal-content {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        width: 90%;
+        max-width: 400px;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .modal-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+    
+    .modal-close {
+        font-size: 20px;
+        color: var(--text-secondary);
+        cursor: pointer;
+    }
+    
+    .modal-body {
+        margin-bottom: 15px;
+    }
+    
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .modal-button {
+        padding: 8px 15px;
+        border-radius: 8px;
+        background-color: var(--primary-color);
+        color: white;
+        font-family: 'Cairo', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-button:hover {
+        background-color: #c09c31;
+    }
+    
+    .image-preview {
+        max-width: 100%;
+        max-height: 300px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .image-input {
+        display: none;
+    }
+    
+    .image-upload-button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        text-align: center;
+        background-color: var(--action-bg);
+        color: var(--text-color);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .image-upload-button:hover {
+        background-color: var(--border-color);
+    }
+    
+    .location-modal-map {
+        width: 100%;
+        height: 200px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        background-color: #f1f1f1;
+        position: relative;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-header">
+        <a href="{{ url_for('messages') }}" class="back-button">
+            <i class="fas fa-arrow-right"></i>
+        </a>
+        <div class="chat-user">
+            <img src="{{ receiver.image }}" alt="{{ receiver.name }}" class="chat-avatar">
+            <div class="chat-user-info">
+                <div class="chat-user-name">{{ receiver.name }}</div>
+                <div class="chat-user-status">
+                    {% if receiver.online %}
+                    <span style="color: #4CAF50;">● متصل الآن</span>
+                    {% else %}
+                    <span>آخر ظهور {{ receiver.last_seen }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="chat-actions">
+            <div class="chat-action">
+                <i class="fas fa-phone"></i>
+            </div>
+            <div class="chat-action">
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="chat-body" id="chat-body">
+        {% if messages|length > 0 %}
+            {% set current_date = '' %}
+            {% for message in messages %}
+                {% if message.date != current_date %}
+                    <div class="message-date">{{ message.date }}</div>
+                    {% set current_date = message.date %}
+                {% endif %}
+                
+                {% if message.sender_id == g.user.id %}
+                    <div class="message message-sent">
+                        {{ message.text }}
+                        <div class="message-time">{{ message.time }} <i class="fas fa-check-double" style="font-size: 8px; margin-right: 3px;"></i></div>
+                    </div>
+                {% else %}
+                    <div class="message message-received">
+                        {{ message.text }}
+                        <div class="message-time">{{ message.time }}</div>
+                    </div>
+                {% endif %}
+                
+                {% if message.property_id %}
+                    <div class="message {% if message.sender_id == g.user.id %}message-sent{% else %}message-received{% endif %}">
+                        <div class="property-card">
+                            <img src="{{ message.property.images[0] }}" alt="{{ message.property.title }}" class="property-image">
+                            <div class="property-info">
+                                <div class="property-title">{{ message.property.title }}</div>
+                                <div class="property-price">{{ "{:,}".format(message.property.price) }} ريال</div>
+                                <div class="property-location"><i class="fas fa-map-marker-alt"></i> {{ message.property.location }}</div>
+                            </div>
+                        </div>
+                        <div class="message-time">{{ message.time }}</div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="message-date">اليوم</div>
+            <div class="message message-received">
+                مرحباً بك، كيف يمكنني مساعدتك اليوم؟
+                <div class="message-time">{{ now }}</div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="chat-footer">
+        <div class="chat-input-container">
+            <div class="chat-input-action" id="emoji-button">
+                <i class="far fa-smile"></i>
+            </div>
+            <input type="text" class="chat-input" id="message-input" placeholder="اكتب رسالتك هنا..." dir="rtl">
+            <div class="chat-input-action" id="attachment-button">
+                <i class="fas fa-paperclip"></i>
+            </div>
+            <div class="chat-input-action" id="camera-button">
+                <i class="fas fa-camera"></i>
+            </div>
+            <div class="chat-input-action" id="location-button">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+        </div>
+        <div class="chat-send" id="send-button">
+            <i class="fas fa-paper-plane"></i>
+        </div>
+    </div>
+    
+    <!-- نافذة إرسال الصور -->
+    <div class="modal" id="image-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">إرسال صورة</div>
+                <div class="modal-close" id="close-image-modal">&times;</div>
+            </div>
+            <div class="modal-body">
+                <img id="image-preview" class="image-preview" style="display: none;">
+                <label for="image-input" class="image-upload-button">
+                    <i class="fas fa-upload"></i> اختر صورة
+                </label>
+                <input type="file" id="image-input" class="image-input" accept="image/*">
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button" id="send-image-button" disabled>إرسال</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- نافذة إرسال الموقع -->
+    <div class="modal" id="location-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">إرسال الموقع</div>
+                <div class="modal-close" id="close-location-modal">&times;</div>
+            </div>
+            <div class="modal-body">
+                <div class="location-modal-map" id="location-map">
+                    <div class="location-pin"><i class="fas fa-map-marker-alt"></i></div>
+                </div>
+                <div id="location-address">جاري تحديد الموقع...</div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button" id="send-location-button">إرسال</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // تمرير إلى آخر رسالة عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatBody = document.getElementById('chat-body');
+        chatBody.scrollTop = chatBody.scrollHeight;
+        
+        // إضافة مستمعي الأحداث للنوافذ المنبثقة
+        setupImageUpload();
+        setupLocationSharing();
+    });
+    
+    // إعداد وظائف إرسال الصور
+    function setupImageUpload() {
+        const imageModal = document.getElementById('image-modal');
+        const cameraButton = document.getElementById('camera-button');
+        const closeImageModal = document.getElementById('close-image-modal');
+        const imageInput = document.getElementById('image-input');
+        const imagePreview = document.getElementById('image-preview');
+        const sendImageButton = document.getElementById('send-image-button');
+        
+        // فتح نافذة الصور
+        cameraButton.addEventListener('click', function() {
+            imageModal.style.display = 'flex';
+        });
+        
+        // إغلاق نافذة الصور
+        closeImageModal.addEventListener('click', function() {
+            imageModal.style.display = 'none';
+            imagePreview.style.display = 'none';
+            imageInput.value = '';
+            sendImageButton.disabled = true;
+        });
+        
+        // معاينة الصورة المختارة
+        imageInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                    sendImageButton.disabled = false;
+                }
+                
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+        
+        // إرسال الصورة
+        sendImageButton.addEventListener('click', function() {
+            // هنا سيتم إرسال الصورة إلى الخادم في التطبيق الحقيقي
+            // لأغراض العرض، سنقوم بإضافة الصورة مباشرة إلى المحادثة
+            
+            const chatBody = document.getElementById('chat-body');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message message-sent';
+            
+            const imageElement = document.createElement('img');
+            imageElement.src = imagePreview.src;
+            imageElement.className = 'message-image';
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            const now = new Date();
+            timeDiv.innerHTML = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes() + 
+                                ' <i class="fas fa-check-double" style="font-size: 8px; margin-right: 3px;"></i>';
+            
+            messageDiv.appendChild(imageElement);
+            messageDiv.appendChild(timeDiv);
+            chatBody.appendChild(messageDiv);
+            
+            // تمرير إلى أسفل
+            chatBody.scrollTop = chatBody.scrollHeight;
+            
+            // إغلاق النافذة المنبثقة
+            imageModal.style.display = 'none';
+            imagePreview.style.display = 'none';
+            imageInput.value = '';
+            sendImageButton.disabled = true;
+        });
+    }
+    
+    // إعداد وظائف مشاركة الموقع
+    function setupLocationSharing() {
+        const locationModal = document.getElementById('location-modal');
+        const locationButton = document.getElementById('location-button');
+        const closeLocationModal = document.getElementById('close-location-modal');
+        const sendLocationButton = document.getElementById('send-location-button');
+        const locationAddress = document.getElementById('location-address');
+        
+        // فتح نافذة الموقع
+        locationButton.addEventListener('click', function() {
+            locationModal.style.display = 'flex';
+            
+            // محاكاة الحصول على الموقع
+            setTimeout(function() {
+                locationAddress.textContent = 'الرياض، المملكة العربية السعودية';
+            }, 1000);
+        });
+        
+        // إغلاق نافذة الموقع
+        closeLocationModal.addEventListener('click', function() {
+            locationModal.style.display = 'none';
+        });
+        
+        // إرسال الموقع
+        sendLocationButton.addEventListener('click', function() {
+            // هنا سيتم إرسال الموقع إلى الخادم في التطبيق الحقيقي
+            // لأغراض العرض، سنقوم بإضافة الموقع مباشرة إلى المحادثة
+            
+            const chatBody = document.getElementById('chat-body');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message message-sent';
+            
+            const locationDiv = document.createElement('div');
+            locationDiv.className = 'message-location';
+            
+            // استخدام صورة خريطة ثابتة للعرض
+            const mapImg = document.createElement('img');
+            mapImg.src = 'https://maps.googleapis.com/maps/api/staticmap?center=Riyadh,SaudiArabia&zoom=13&size=200x150&maptype=roadmap&markers=color:red%7CRiyadh,SaudiArabia&key=YOUR_API_KEY';
+            mapImg.className = 'location-map';
+            
+            const pinDiv = document.createElement('div');
+            pinDiv.className = 'location-pin';
+            pinDiv.innerHTML = '<i class="fas fa-map-marker-alt"></i>';
+            
+            const addressDiv = document.createElement('div');
+            addressDiv.className = 'location-address';
+            addressDiv.textContent = locationAddress.textContent;
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            const now = new Date();
+            timeDiv.innerHTML = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes() + 
+                                ' <i class="fas fa-check-double" style="font-size: 8px; margin-right: 3px;"></i>';
+            
+            locationDiv.appendChild(mapImg);
+            locationDiv.appendChild(pinDiv);
+            locationDiv.appendChild(addressDiv);
+            
+            messageDiv.appendChild(locationDiv);
+            messageDiv.appendChild(timeDiv);
+            chatBody.appendChild(messageDiv);
+            
+            // تمرير إلى أسفل
+            chatBody.scrollTop = chatBody.scrollHeight;
+            
+            // إغلاق النافذة المنبثقة
+            locationModal.style.display = 'none';
+        });
+    }
+    
+    function sendMessage() {
+        const messageInput = document.getElementById('message-input');
+        const message = messageInput.value.trim();
+        
+        if (message) {
+            const chatBody = document.getElementById('chat-body');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message message-sent';
+            
+            messageDiv.textContent = message;
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            const now = new Date();
+            timeDiv.innerHTML = now.getHours() + ':' + (now.getMinutes() < 10 ? '0' : '') + now.getMinutes() + 
+                                ' <i class="fas fa-check-double" style="font-size: 8px; margin-right: 3px;"></i>';
+            
+            messageDiv.appendChild(timeDiv);
+            chatBody.appendChild(messageDiv);
+            
+            // تمرير إلى أسفل
+            chatBody.scrollTop = chatBody.scrollHeight;
+            
+            // إرسال الرسالة إلى الخادم
+            fetch('/send-message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    chat_id: '{{ chat_id }}',
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    console.error('Error sending message:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+            });
+            
+            // مسح حقل الإدخال
+            messageInput.value = '';
+        }
+    }
+    
+    // إرسال الرسالة عند النقر على زر الإرسال
+    document.getElementById('send-button').addEventListener('click', sendMessage);
+    
+    // إرسال الرسالة عند الضغط على Enter
+    document.getElementById('message-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+    
+    // إضافة وظيفة زر الملحقات
+    document.getElementById('attachment-button').addEventListener('click', function() {
+        // في التطبيق الحقيقي، هنا سيتم فتح نافذة لاختيار الملفات
+        alert('سيتم تنفيذ هذه الميزة في الإصدار القادم');
+    });
+    
+    // إضافة وظيفة زر الرموز التعبيرية
+    document.getElementById('emoji-button').addEventListener('click', function() {
+        // في التطبيق الحقيقي، هنا سيتم فتح لوحة الرموز التعبيرية
+        alert('سيتم تنفيذ هذه الميزة في الإصدار القادم');
+    });
+</script>
+{% endblock %}

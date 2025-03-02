@@ -1,0 +1,540 @@
+{% extends "base.html" %}
+
+{% block title %}تقييم الزيارة - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        padding-bottom: 70px !important; /* إضافة مساحة في الأسفل للشريط السفلي */
+    }
+    
+    .review-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        padding-bottom: 30px;
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .review-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .review-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 10px;
+    }
+    
+    .review-subtitle {
+        font-size: 16px;
+        color: var(--text-secondary);
+    }
+    
+    .property-card {
+        display: flex;
+        background-color: var(--action-bg);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 25px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .property-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .property-image {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+    }
+    
+    .property-info {
+        flex-grow: 1;
+        padding: 15px;
+    }
+    
+    .property-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 5px;
+    }
+    
+    .property-price {
+        font-size: 16px;
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+    
+    .property-location {
+        font-size: 14px;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    
+    .property-location i {
+        margin-left: 5px;
+        font-size: 14px;
+    }
+    
+    .property-agent {
+        font-size: 14px;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+    }
+    
+    .property-agent i {
+        margin-left: 5px;
+        font-size: 14px;
+    }
+    
+    .review-form {
+        padding: 20px;
+        background-color: var(--background-color);
+        border-radius: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        font-size: 16px;
+        color: var(--text-color);
+        margin-bottom: 10px;
+    }
+    
+    .rating-stars {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+    
+    .rating-stars input {
+        display: none;
+    }
+    
+    .rating-stars label {
+        cursor: pointer;
+        font-size: 30px;
+        color: #ddd;
+        padding: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    .rating-stars label:hover,
+    .rating-stars label:hover ~ label,
+    .rating-stars input:checked ~ label {
+        color: var(--primary-color);
+    }
+    
+    .rating-categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+    
+    .rating-category {
+        background-color: var(--card-bg);
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .category-title {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-color);
+        margin-bottom: 10px;
+    }
+    
+    .category-stars {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+    
+    .category-stars input {
+        display: none;
+    }
+    
+    .category-stars label {
+        cursor: pointer;
+        font-size: 20px;
+        color: #ddd;
+        padding: 3px;
+        transition: color 0.3s ease;
+    }
+    
+    .category-stars label:hover,
+    .category-stars label:hover ~ label,
+    .category-stars input:checked ~ label {
+        color: var(--primary-color);
+    }
+    
+    .form-textarea {
+        width: 100%;
+        height: 120px;
+        padding: 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background-color: var(--input-bg);
+        color: var(--text-color);
+        font-size: 14px;
+        resize: vertical;
+        transition: border-color 0.3s ease;
+    }
+    
+    .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    
+    .form-textarea::placeholder {
+        color: var(--text-secondary);
+    }
+    
+    .form-checkbox {
+        display: flex;
+        align-items: center;
+    }
+    
+    .form-checkbox input {
+        margin-left: 10px;
+    }
+    
+    .form-checkbox label {
+        font-size: 14px;
+        color: var(--text-color);
+    }
+    
+    .form-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    
+    .btn-submit {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 30px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-submit:hover {
+        background-color: #c09c31;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-cancel {
+        background-color: var(--action-bg);
+        color: var(--text-color);
+        border: none;
+        border-radius: 8px;
+        padding: 12px 30px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        margin-right: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-cancel:hover {
+        background-color: var(--border-color);
+        transform: translateY(-2px);
+    }
+    
+    .success-message {
+        text-align: center;
+        padding: 30px;
+        display: none;
+    }
+    
+    .success-icon {
+        font-size: 60px;
+        color: #4CAF50;
+        margin-bottom: 20px;
+    }
+    
+    .success-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 15px;
+    }
+    
+    .success-text {
+        font-size: 16px;
+        color: var(--text-secondary);
+        margin-bottom: 25px;
+    }
+    
+    .success-button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 30px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .success-button:hover {
+        background-color: #c09c31;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* تعديلات الوضع الداكن */
+    :root {
+        --primary-color: #D4AF37;
+        --text-color: #333333;
+        --text-secondary: #666666;
+        --background-color: #f8f8f8;
+        --card-bg: #ffffff;
+        --border-color: #eeeeee;
+        --action-bg: #f5f5f5;
+        --input-bg: #ffffff;
+    }
+    
+    .dark-mode {
+        --text-color: #f0f0f0;
+        --text-secondary: #b0b0b0;
+        --background-color: #121212;
+        --card-bg: #1e1e1e;
+        --border-color: #2c2c2c;
+        --action-bg: #2c2c2c;
+        --input-bg: #2c2c2c;
+    }
+    
+    /* تحسينات للشاشات الصغيرة */
+    @media (max-width: 768px) {
+        .review-container {
+            margin: 10px;
+            padding: 15px;
+        }
+        
+        .property-image {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .rating-categories {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn-cancel {
+            margin-right: 0;
+            margin-top: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="review-container">
+    <div class="review-header">
+        <div class="review-title">تقييم الزيارة</div>
+        <div class="review-subtitle">شاركنا رأيك في زيارتك للعقار</div>
+    </div>
+    
+    <div class="property-card">
+        <img src="{{ appointment.property.images[0] }}" alt="{{ appointment.property.title }}" class="property-image">
+        <div class="property-info">
+            <div class="property-title">{{ appointment.property.title }}</div>
+            <div class="property-price">{{ "{:,}".format(appointment.property.price) }} ريال</div>
+            <div class="property-location"><i class="fas fa-map-marker-alt"></i> {{ appointment.property.location }}</div>
+            <div class="property-agent"><i class="fas fa-user-tie"></i> {{ appointment.agent.name }}</div>
+        </div>
+    </div>
+    
+    <div id="review-form-container">
+        <form class="review-form" id="review-form">
+            <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+            <input type="hidden" name="property_id" value="{{ appointment.property.id }}">
+            <input type="hidden" name="agent_id" value="{{ appointment.agent.id }}">
+            
+            <div class="form-group">
+                <label class="form-label">التقييم العام</label>
+                <div class="rating-stars">
+                    <input type="radio" id="star5" name="rating" value="5" required>
+                    <label for="star5"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="star4" name="rating" value="4">
+                    <label for="star4"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="star3" name="rating" value="3">
+                    <label for="star3"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="star2" name="rating" value="2">
+                    <label for="star2"><i class="fas fa-star"></i></label>
+                    <input type="radio" id="star1" name="rating" value="1">
+                    <label for="star1"><i class="fas fa-star"></i></label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">تقييم الفئات</label>
+                <div class="rating-categories">
+                    <div class="rating-category">
+                        <div class="category-title">الموقع</div>
+                        <div class="category-stars">
+                            <input type="radio" id="location5" name="location_rating" value="5" required>
+                            <label for="location5"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="location4" name="location_rating" value="4">
+                            <label for="location4"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="location3" name="location_rating" value="3">
+                            <label for="location3"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="location2" name="location_rating" value="2">
+                            <label for="location2"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="location1" name="location_rating" value="1">
+                            <label for="location1"><i class="fas fa-star"></i></label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-category">
+                        <div class="category-title">القيمة مقابل السعر</div>
+                        <div class="category-stars">
+                            <input type="radio" id="value5" name="value_rating" value="5" required>
+                            <label for="value5"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="value4" name="value_rating" value="4">
+                            <label for="value4"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="value3" name="value_rating" value="3">
+                            <label for="value3"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="value2" name="value_rating" value="2">
+                            <label for="value2"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="value1" name="value_rating" value="1">
+                            <label for="value1"><i class="fas fa-star"></i></label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-category">
+                        <div class="category-title">التصميم والمساحة</div>
+                        <div class="category-stars">
+                            <input type="radio" id="design5" name="design_rating" value="5" required>
+                            <label for="design5"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="design4" name="design_rating" value="4">
+                            <label for="design4"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="design3" name="design_rating" value="3">
+                            <label for="design3"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="design2" name="design_rating" value="2">
+                            <label for="design2"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="design1" name="design_rating" value="1">
+                            <label for="design1"><i class="fas fa-star"></i></label>
+                        </div>
+                    </div>
+                    
+                    <div class="rating-category">
+                        <div class="category-title">خدمة المسوق</div>
+                        <div class="category-stars">
+                            <input type="radio" id="agent5" name="agent_rating" value="5" required>
+                            <label for="agent5"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="agent4" name="agent_rating" value="4">
+                            <label for="agent4"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="agent3" name="agent_rating" value="3">
+                            <label for="agent3"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="agent2" name="agent_rating" value="2">
+                            <label for="agent2"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="agent1" name="agent_rating" value="1">
+                            <label for="agent1"><i class="fas fa-star"></i></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">تعليقك على الزيارة</label>
+                <textarea class="form-textarea" name="comment" placeholder="اكتب تعليقك هنا..." required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <div class="form-checkbox">
+                    <input type="checkbox" id="public-review" name="public_review" checked>
+                    <label for="public-review">نشر التقييم بشكل عام</label>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">إرسال التقييم</button>
+                <a href="{{ url_for('appointments') }}" class="btn-cancel">إلغاء</a>
+            </div>
+        </form>
+    </div>
+    
+    <div class="success-message" id="success-message">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="success-title">تم إرسال تقييمك بنجاح</div>
+        <div class="success-text">شكراً لك على مشاركة رأيك، سيساعد ذلك العملاء الآخرين في اتخاذ قراراتهم</div>
+        <a href="{{ url_for('appointments') }}" class="success-button">العودة إلى المواعيد</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const reviewForm = document.getElementById('review-form');
+        const formContainer = document.getElementById('review-form-container');
+        const successMessage = document.getElementById('success-message');
+        
+        reviewForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // هنا يمكن إضافة كود لإرسال البيانات إلى الخادم
+            // على سبيل المثال باستخدام fetch API
+            
+            // محاكاة لعملية الإرسال
+            setTimeout(function() {
+                formContainer.style.display = 'none';
+                successMessage.style.display = 'block';
+            }, 1000);
+        });
+        
+        // إضافة تأثيرات حركية للنجوم
+        const stars = document.querySelectorAll('.rating-stars label, .category-stars label');
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                this.classList.add('animate__animated', 'animate__pulse');
+            });
+            
+            star.addEventListener('mouseout', function() {
+                this.classList.remove('animate__animated', 'animate__pulse');
+            });
+        });
+    });
+</script>
+{% endblock %}

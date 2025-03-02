@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}تيك توك العقاري - الرئيسية{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        padding-bottom: 70px !important;
+        margin-bottom: 0;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .video-feed {
+        height: calc(100vh - 70px);
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .video-container {
+        height: 100%;
+        width: 100%;
+        position: relative;
+        scroll-snap-align: start;
+    }
+    
+    .property-video {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+    
+    .video-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 50%);
+        z-index: 1;
+    }
+    
+    .property-info {
+        position: absolute;
+        bottom: 80px;
+        right: 15px;
+        z-index: 2;
+        max-width: 70%;
+        text-align: right;
+    }
+    
+    .property-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: #fff;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    
+    .property-details {
+        font-size: 14px;
+        margin-bottom: 5px;
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .property-price {
+        font-family: 'Roboto', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: #D4AF37;
+        margin-bottom: 10px;
+    }
+    
+    .agent-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .agent-pic {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #D4AF37;
+        margin-left: 10px;
+    }
+    
+    .agent-name {
+        font-size: 14px;
+        color: #fff;
+    }
+    
+    .action-buttons {
+        position: absolute;
+        left: 15px;
+        bottom: 80px;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .action-button {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 15px;
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .action-button:hover, .action-button.active {
+        background-color: #D4AF37;
+        transform: scale(1.1);
+    }
+    
+    .action-button .count {
+        font-size: 12px;
+        margin-top: 3px;
+    }
+    
+    .book-button {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        left: 15px;
+        z-index: 2;
+        background-color: #D4AF37;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .book-button:hover {
+        background-color: #c49f33;
+    }
+    
+    .top-nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        z-index: 3;
+    }
+    
+    .app-logo {
+        font-family: 'Cairo', sans-serif;
+        font-weight: 700;
+        color: #D4AF37;
+        font-size: 20px;
+    }
+    
+    .nav-icons {
+        display: flex;
+    }
+    
+    .nav-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;
+        color: #fff;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    
+    .nav-icon:hover {
+        background-color: #D4AF37;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="top-nav">
+    <div class="app-logo">تيك توك العقاري</div>
+    <div class="nav-icons">
+        <a href="{{ url_for('search') }}" class="nav-icon">
+            <i class="fas fa-search"></i>
+        </a>
+        <div class="nav-icon">
+            <i class="fas fa-bell"></i>
+        </div>
+    </div>
+</div>
+
+<div class="video-feed" id="videoFeed">
+    {% for property in properties %}
+    <div class="video-container" data-property-id="{{ property.id }}">
+        <video class="property-video" src="{{ property.videos[0] }}" loop muted></video>
+        <div class="video-overlay"></div>
+        
+        <div class="property-info">
+            <div class="property-title">{{ property.title }}</div>
+            <div class="property-details">{{ property.location }} | {{ property.area }} متر مربع | {{ property.bedrooms }} غرف</div>
+            <div class="property-price">{{ property.price | format_price }} ريال</div>
+            
+            <div class="agent-info">
+                {% for agent in agents %}
+                    {% if agent.id == property.agent_id %}
+                        <img src="{{ agent.image }}" alt="{{ agent.name }}" class="agent-pic">
+                        <div class="agent-name">{{ agent.name }}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <div class="action-button like-button" onclick="likeProperty('{{ property.id }}')">
+                <i class="fas fa-heart"></i>
+                <div class="count">{{ property.likes }}</div>
+            </div>
+            <div class="action-button comment-button" onclick="showComments('{{ property.id }}')">
+                <i class="fas fa-comment"></i>
+                <div class="count">{{ property.comments | length }}</div>
+            </div>
+            <div class="action-button share-button" onclick="shareProperty('{{ property.id }}')">
+                <i class="fas fa-share"></i>
+            </div>
+            <div class="action-button save-button" onclick="saveProperty('{{ property.id }}')">
+                <i class="fas fa-bookmark"></i>
+            </div>
+        </div>
+        
+        <a href="{{ url_for('book_appointment_route', property_id=property.id) }}" class="book-button btn-book">
+            حجز موعد معاينة
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const videos = document.querySelectorAll('.property-video');
+        let currentVideoIndex = 0;
+        
+        // تهيئة المراقب لمعرفة متى يظهر الفيديو في منطقة العرض
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target;
+                
+                if (entry.isIntersecting) {
+                    // الفيديو ظاهر في منطقة العرض
+                    video.play();
+                    video.muted = false;
+                } else {
+                    // الفيديو غير ظاهر
+                    video.pause();
+                    video.muted = true;
+                }
+            });
+        }, { threshold: 0.6 });
+        
+        // مراقبة جميع الفيديوهات
+        videos.forEach(video => {
+            observer.observe(video);
+        });
+        
+        // تشغيل الفيديو الأول تلقائياً
+        if (videos.length > 0) {
+            videos[0].play();
+            videos[0].muted = false;
+        }
+        
+        // إعداد التمرير السلس بين الفيديوهات
+        const videoFeed = document.getElementById('videoFeed');
+        
+        // تنفيذ التمرير العمودي السلس
+        videoFeed.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            
+            if (e.deltaY > 0 && currentVideoIndex < videos.length - 1) {
+                // تمرير للأسفل
+                currentVideoIndex++;
+            } else if (e.deltaY < 0 && currentVideoIndex > 0) {
+                // تمرير للأعلى
+                currentVideoIndex--;
+            }
+            
+            const videoContainer = videos[currentVideoIndex].parentElement;
+            videoContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // إعداد التمرير باللمس للهواتف
+        let touchStartY = 0;
+        
+        videoFeed.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        });
+        
+        videoFeed.addEventListener('touchend', (e) => {
+            const touchEndY = e.changedTouches[0].clientY;
+            const diff = touchStartY - touchEndY;
+            
+            if (diff > 50 && currentVideoIndex < videos.length - 1) {
+                // تمرير للأسفل
+                currentVideoIndex++;
+                const videoContainer = videos[currentVideoIndex].parentElement;
+                videoContainer.scrollIntoView({ behavior: 'smooth' });
+            } else if (diff < -50 && currentVideoIndex > 0) {
+                // تمرير للأعلى
+                currentVideoIndex--;
+                const videoContainer = videos[currentVideoIndex].parentElement;
+                videoContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+    
+    // وظائف التفاعل
+    function likeProperty(propertyId) {
+        const likeButton = event.currentTarget;
+        likeButton.classList.toggle('active');
+        
+        // هنا يمكن إرسال طلب للخادم لتسجيل الإعجاب
+        console.log(`تم الإعجاب بالعقار: ${propertyId}`);
+    }
+    
+    function showComments(propertyId) {
+        // عرض التعليقات
+        console.log(`عرض تعليقات العقار: ${propertyId}`);
+    }
+    
+    function shareProperty(propertyId) {
+        // مشاركة العقار
+        console.log(`مشاركة العقار: ${propertyId}`);
+    }
+    
+    function saveProperty(propertyId) {
+        const saveButton = event.currentTarget;
+        saveButton.classList.toggle('active');
+        
+        // حفظ العقار في المفضلة
+        console.log(`حفظ العقار: ${propertyId}`);
+    }
+</script>
+{% endblock %}

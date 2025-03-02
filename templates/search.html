@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+
+{% block title %}تيك توك العقاري - البحث{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important; /* إضافة مساحة في الأسفل للشريط السفلي */
+    }
+    
+    .search-container {
+        padding: 15px;
+        padding-bottom: 70px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .search-header {
+        position: sticky;
+        top: 0;
+        background-color: #f8f8f8;
+        padding: 10px 0;
+        z-index: 10;
+    }
+    
+    .search-bar {
+        display: flex;
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 10px 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+    }
+    
+    .search-input {
+        flex-grow: 1;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        padding-right: 10px;
+    }
+    
+    .search-icon {
+        color: #666;
+        font-size: 18px;
+    }
+    
+    .filter-chips {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .filter-chip {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 8px 15px;
+        margin-left: 10px;
+        white-space: nowrap;
+        font-size: 14px;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .filter-chip.active {
+        background-color: #D4AF37;
+        color: #fff;
+        border-color: #D4AF37;
+    }
+    
+    .filter-button {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 20px;
+        cursor: pointer;
+    }
+    
+    .filter-button i {
+        color: #666;
+    }
+    
+    .filter-panel {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: none;
+    }
+    
+    .filter-panel.active {
+        display: block;
+    }
+    
+    .filter-section {
+        margin-bottom: 20px;
+    }
+    
+    .filter-section h3 {
+        font-family: 'Cairo', sans-serif;
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .range-slider {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .range-values {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+    }
+    
+    .checkbox-item input {
+        margin-left: 8px;
+    }
+    
+    .apply-filters {
+        background-color: #D4AF37;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        width: 100%;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .apply-filters:hover {
+        background-color: #c49f33;
+    }
+    
+    .results-count {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 15px;
+    }
+    
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .property-card {
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .property-image {
+        height: 150px;
+        width: 100%;
+        object-fit: cover;
+    }
+    
+    .property-card-info {
+        padding: 12px;
+    }
+    
+    .property-card-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: #333;
+    }
+    
+    .property-card-details {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+    
+    .property-card-price {
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: #D4AF37;
+    }
+    
+    .view-toggle {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 15px;
+    }
+    
+    .view-toggle-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background-color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;
+        color: #666;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .view-toggle-button.active {
+        background-color: #D4AF37;
+        color: #fff;
+    }
+    
+    .results-list {
+        display: none;
+    }
+    
+    .property-list-item {
+        display: flex;
+        background-color: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+    }
+    
+    .property-list-image {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+    }
+    
+    .property-list-info {
+        flex-grow: 1;
+        padding: 12px;
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 30px;
+        color: #666;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <div class="search-header">
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="ابحث عن عقار..." value="{{ query }}">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        
+        <div class="filter-chips">
+            <div class="filter-chip active">الكل</div>
+            <div class="filter-chip">فلل</div>
+            <div class="filter-chip">شقق</div>
+            <div class="filter-chip">أراضي</div>
+            <div class="filter-chip">تجاري</div>
+            <div class="filter-chip">إيجار</div>
+            <div class="filter-chip">بيع</div>
+        </div>
+        
+        <div class="filter-button" onclick="toggleFilterPanel()">
+            <span>فلترة متقدمة</span>
+            <i class="fas fa-sliders-h"></i>
+        </div>
+    </div>
+    
+    <div class="filter-panel" id="filterPanel">
+        <form action="{{ url_for('search') }}" method="get">
+            <div class="filter-section">
+                <h3>السعر</h3>
+                <input type="range" class="range-slider" min="0" max="10000000" step="100000" id="priceRange">
+                <div class="range-values">
+                    <span>0 ريال</span>
+                    <span id="priceValue">5,000,000 ريال</span>
+                    <span>10,000,000 ريال</span>
+                </div>
+                <input type="hidden" name="min_price" id="minPrice" value="0">
+                <input type="hidden" name="max_price" id="maxPrice" value="5000000">
+            </div>
+            
+            <div class="filter-section">
+                <h3>نوع العقار</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="villa" name="type" value="villa">
+                        <label for="villa">فيلا</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="apartment" name="type" value="apartment">
+                        <label for="apartment">شقة</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="land" name="type" value="land">
+                        <label for="land">أرض</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="commercial" name="type" value="commercial">
+                        <label for="commercial">تجاري</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <h3>عدد الغرف</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="rooms1" name="bedrooms" value="1">
+                        <label for="rooms1">1 غرفة</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="rooms2" name="bedrooms" value="2">
+                        <label for="rooms2">2 غرفة</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="rooms3" name="bedrooms" value="3">
+                        <label for="rooms3">3 غرف</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="rooms4" name="bedrooms" value="4">
+                        <label for="rooms4">4+ غرف</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <h3>المنطقة</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="riyadh" name="location" value="الرياض">
+                        <label for="riyadh">الرياض</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="jeddah" name="location" value="جدة">
+                        <label for="jeddah">جدة</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="dammam" name="location" value="الدمام">
+                        <label for="dammam">الدمام</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="makkah" name="location" value="مكة">
+                        <label for="makkah">مكة</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="apply-filters">تطبيق الفلترة</button>
+        </form>
+    </div>
+    
+    <div class="view-toggle">
+        <div class="view-toggle-button active" onclick="toggleView('grid')">
+            <i class="fas fa-th"></i>
+        </div>
+        <div class="view-toggle-button" onclick="toggleView('list')">
+            <i class="fas fa-list"></i>
+        </div>
+    </div>
+    
+    <div class="results-count">{{ properties|length }} عقار</div>
+    
+    {% if properties|length > 0 %}
+    <div class="results-grid" id="gridView">
+        {% for property in properties %}
+        <a href="{{ url_for('property_details', property_id=property.id) }}" class="property-card">
+            <img src="{{ property.images[0] }}" alt="{{ property.title }}" class="property-image">
+            <div class="property-card-info">
+                <div class="property-card-title">{{ property.title }}</div>
+                <div class="property-card-details">{{ property.location }} | {{ property.bedrooms }} غرف</div>
+                <div class="property-card-price">{{ property.price | format_price }} ريال</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    
+    <div class="results-list" id="listView">
+        {% for property in properties %}
+        <a href="{{ url_for('property_details', property_id=property.id) }}" class="property-list-item">
+            <img src="{{ property.images[0] }}" alt="{{ property.title }}" class="property-list-image">
+            <div class="property-list-info">
+                <div class="property-card-title">{{ property.title }}</div>
+                <div class="property-card-details">{{ property.location }} | {{ property.area }} متر مربع | {{ property.bedrooms }} غرف</div>
+                <div class="property-card-price">{{ property.price | format_price }} ريال</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-results">
+        <i class="fas fa-search" style="font-size: 48px; color: #ddd; margin-bottom: 15px;"></i>
+        <h3>لا توجد نتائج</h3>
+        <p>حاول تغيير معايير البحث</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleFilterPanel() {
+        const filterPanel = document.getElementById('filterPanel');
+        filterPanel.classList.toggle('active');
+    }
+    
+    function toggleView(viewType) {
+        const gridView = document.getElementById('gridView');
+        const listView = document.getElementById('listView');
+        const gridButton = document.querySelector('.view-toggle-button:first-child');
+        const listButton = document.querySelector('.view-toggle-button:last-child');
+        
+        if (viewType === 'grid') {
+            gridView.style.display = 'grid';
+            listView.style.display = 'none';
+            gridButton.classList.add('active');
+            listButton.classList.remove('active');
+        } else {
+            gridView.style.display = 'none';
+            listView.style.display = 'block';
+            gridButton.classList.remove('active');
+            listButton.classList.add('active');
+        }
+    }
+    
+    // تحديث قيمة نطاق السعر
+    const priceRange = document.getElementById('priceRange');
+    const priceValue = document.getElementById('priceValue');
+    const minPrice = document.getElementById('minPrice');
+    const maxPrice = document.getElementById('maxPrice');
+    
+    priceRange.addEventListener('input', function() {
+        const value = this.value;
+        priceValue.textContent = formatPrice(value) + ' ريال';
+        maxPrice.value = value;
+    });
+    
+    function formatPrice(price) {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+    // تفعيل الفلتر السريع
+    const filterChips = document.querySelectorAll('.filter-chip');
+    
+    filterChips.forEach(chip => {
+        chip.addEventListener('click', function() {
+            filterChips.forEach(c => c.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+{% endblock %}

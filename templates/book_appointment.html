@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+
+{% block title %}حجز موعد معاينة - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important; /* إضافة مساحة في الأسفل للشريط السفلي */
+    }
+    
+    .booking-container {
+        padding: 20px;
+        padding-bottom: 70px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .page-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .back-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--card-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-color);
+        font-size: 18px;
+        margin-left: 15px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .page-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .property-card {
+        display: flex;
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .property-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .property-image {
+        width: 120px;
+        height: 120px;
+        object-fit: cover;
+    }
+    
+    .property-info {
+        padding: 15px;
+        flex-grow: 1;
+    }
+    
+    .property-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 8px;
+        transition: color 0.3s ease;
+    }
+    
+    .property-location {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        transition: color 0.3s ease;
+    }
+    
+    .property-location i {
+        margin-left: 5px;
+        color: #D4AF37;
+    }
+    
+    .property-price {
+        font-family: 'Roboto', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: #D4AF37;
+    }
+    
+    .booking-form {
+        background-color: #fff;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    }
+    
+    .form-section {
+        margin-bottom: 25px;
+    }
+    
+    .section-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 15px;
+        transition: color 0.3s ease;
+    }
+    
+    .date-selector {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .date-item {
+        min-width: 80px;
+        height: 100px;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        margin-left: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .date-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .date-item.active {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .date-day {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    .date-number {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 3px;
+        transition: color 0.3s ease;
+    }
+    
+    .date-month {
+        font-size: 12px;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    
+    .date-item.active .date-day,
+    .date-item.active .date-number,
+    .date-item.active .date-month {
+        color: #fff;
+    }
+    
+    .time-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 10px;
+        margin-bottom: 25px;
+    }
+    
+    .time-item {
+        height: 40px;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--text-color);
+    }
+    
+    .time-item:hover {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+    
+    .time-item.active {
+        background-color: var(--primary-color);
+        color: #fff;
+        border-color: var(--primary-color);
+        transform: translateY(-3px);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        font-size: 14px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    }
+    
+    .book-button {
+        width: 100%;
+        padding: 15px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Cairo', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+    
+    .book-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+    }
+    
+    .alert {
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .alert-success {
+        color: #155724;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+    }
+    
+    /* تعديلات الوضع الداكن */
+    @media (prefers-color-scheme: dark) {
+        .alert-success {
+            color: #d4edda;
+            background-color: rgba(21, 87, 36, 0.8);
+            border: 1px solid rgba(195, 230, 203, 0.3);
+        }
+        
+        .alert-danger {
+            color: #f8d7da;
+            background-color: rgba(114, 28, 36, 0.8);
+            border: 1px solid rgba(245, 198, 203, 0.3);
+        }
+    }
+    
+    .calendar-container {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="booking-container">
+    <div class="page-header">
+        <a href="{{ url_for('property_details', property_id=property.id) }}" class="back-button">
+            <i class="fas fa-arrow-right"></i>
+        </a>
+        <div class="page-title">حجز موعد معاينة</div>
+    </div>
+    
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if 'نجاح' in message %}alert-success{% else %}alert-danger{% endif %}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <div class="property-card">
+        <img src="{{ property.images[0] }}" alt="{{ property.title }}" class="property-image">
+        <div class="property-info">
+            <div class="property-title">{{ property.title }}</div>
+            <div class="property-location"><i class="fas fa-map-marker-alt"></i> {{ property.location }}</div>
+            <div class="property-price">{{ property.price | format_price }} ريال</div>
+        </div>
+    </div>
+    
+    <div class="calendar-container">
+        <form method="post" action="{{ url_for('book_appointment_route', property_id=property.id) }}" class="booking-form">
+            <div class="form-section">
+                <div class="section-title">اختر التاريخ</div>
+                <div class="date-selector">
+                    {% set days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'] %}
+                    {% set months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'] %}
+                    
+                    {% for i in range(7) %}
+                        {% set current_date = now.date() + timedelta(days=i) %}
+                        {% set day_name = days[current_date.weekday()] %}
+                        {% set day_number = current_date.day %}
+                        {% set month_name = months[current_date.month - 1] %}
+                        {% set date_string = current_date.strftime('%Y-%m-%d') %}
+                        
+                        <div class="date-item {% if i == 0 %}active{% endif %}" data-date="{{ date_string }}" onclick="selectDate(this, '{{ date_string }}')">
+                            <div class="date-day">{{ day_name }}</div>
+                            <div class="date-number">{{ day_number }}</div>
+                            <div class="date-month">{{ month_name }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <input type="hidden" name="date" id="selectedDate" value="{{ now.date().strftime('%Y-%m-%d') }}">
+            </div>
+            
+            <div class="form-section">
+                <div class="section-title">اختر الوقت</div>
+                <div class="time-grid">
+                    {% for hour in range(9, 18) %}
+                        {% set time_string = '%02d:00'|format(hour) %}
+                        <div class="time-item" data-time="{{ time_string }}" onclick="selectTime(this, '{{ time_string }}')">
+                            {{ time_string }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <input type="hidden" name="time" id="selectedTime" value="">
+            </div>
+            
+            <div class="form-section">
+                <div class="section-title">ملاحظات إضافية</div>
+                <div class="form-group">
+                    <textarea class="form-control" name="notes" rows="3" placeholder="أي ملاحظات أو متطلبات خاصة..."></textarea>
+                </div>
+            </div>
+            
+            <button type="submit" class="book-button">تأكيد الحجز</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function selectDate(element, date) {
+        // إزالة الفئة النشطة من جميع عناصر التاريخ
+        document.querySelectorAll('.date-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // إضافة الفئة النشطة للعنصر المحدد
+        element.classList.add('active');
+        
+        // تحديث قيمة التاريخ المخفي
+        document.getElementById('selectedDate').value = date;
+    }
+    
+    function selectTime(element, time) {
+        // إزالة الفئة النشطة من جميع عناصر الوقت
+        document.querySelectorAll('.time-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // إضافة الفئة النشطة للعنصر المحدد
+        element.classList.add('active');
+        
+        // تحديث قيمة الوقت المخفي
+        document.getElementById('selectedTime').value = time;
+    }
+    
+    // تحديد أول وقت افتراضياً
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstTimeItem = document.querySelector('.time-item');
+        if (firstTimeItem) {
+            const time = firstTimeItem.getAttribute('data-time');
+            selectTime(firstTimeItem, time);
+        }
+    });
+</script>
+{% endblock %}

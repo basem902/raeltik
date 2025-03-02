@@ -1,0 +1,980 @@
+{% extends "base.html" %}
+
+{% block title %}جدولة المواعيد - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css">
+<style>
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important;
+    }
+    
+    .appointments-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .back-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--card-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-color);
+        font-size: 18px;
+        margin-left: 15px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .page-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+
+    .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .summary-card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .summary-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .summary-card.scheduled {
+        border-top: 4px solid #2196F3;
+    }
+    
+    .summary-card.completed {
+        border-top: 4px solid #4CAF50;
+    }
+    
+    .summary-card.cancelled {
+        border-top: 4px solid #F44336;
+    }
+    
+    .summary-card.total {
+        border-top: 4px solid var(--primary-color);
+    }
+    
+    .summary-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 5px;
+    }
+    
+    .summary-label {
+        font-family: 'Cairo', sans-serif;
+        font-size: 14px;
+        color: var(--secondary-text-color);
+    }
+    
+    .calendar-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 20px;
+    }
+    
+    .calendar-card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .sidebar-card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    #calendar {
+        direction: rtl;
+    }
+
+    .fc-header-toolbar {
+        direction: rtl;
+    }
+    
+    .fc-button {
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+    }
+    
+    .fc-button:hover {
+        background-color: #c39f31 !important;
+        border-color: #c39f31 !important;
+    }
+    
+    .sidebar-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .filter-group {
+        margin-bottom: 20px;
+    }
+    
+    .filter-label {
+        font-family: 'Cairo', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 10px;
+    }
+    
+    .agent-select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background-color: var(--background-color);
+        color: var(--text-color);
+        font-family: 'Cairo', sans-serif;
+    }
+    
+    .status-checkboxes {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .status-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .add-appointment-btn {
+        width: 100%;
+        padding: 12px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .add-appointment-btn:hover {
+        background-color: #c39f31;
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-content {
+        background-color: var(--card-bg);
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 15px;
+        width: 80%;
+        max-width: 600px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .modal-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+    
+    .close-modal, .close-details-modal {
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--text-color);
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background-color: var(--background-color);
+        color: var(--text-color);
+        font-family: 'Cairo', sans-serif;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 12px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        margin-top: 10px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .submit-btn:hover {
+        background-color: #c39f31;
+    }
+    
+    .appointment-details {
+        padding: 10px 0;
+    }
+    
+    .detail-row {
+        display: flex;
+        margin-bottom: 15px;
+        font-family: 'Cairo', sans-serif;
+    }
+    
+    .detail-label {
+        flex: 0 0 120px;
+        font-weight: 600;
+        color: var(--secondary-text-color);
+    }
+    
+    .detail-value {
+        flex: 1;
+        color: var(--text-color);
+    }
+    
+    .detail-value.status-scheduled {
+        color: #2196F3;
+        font-weight: 600;
+    }
+    
+    .detail-value.status-completed {
+        color: #4CAF50;
+        font-weight: 600;
+    }
+    
+    .detail-value.status-cancelled {
+        color: #F44336;
+        font-weight: 600;
+    }
+    
+    .status-actions {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .status-actions h4 {
+        font-family: 'Cairo', sans-serif;
+        font-size: 16px;
+        margin-bottom: 10px;
+        color: var(--text-color);
+    }
+    
+    .status-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .status-btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s ease;
+        opacity: 0.7;
+    }
+    
+    .status-btn:hover {
+        opacity: 1;
+        transform: translateY(-2px);
+    }
+    
+    .status-btn.active {
+        opacity: 1;
+        transform: translateY(-2px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .status-btn.scheduled {
+        background-color: #2196F3;
+        color: white;
+    }
+    
+    .status-btn.completed {
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    .status-btn.cancelled {
+        background-color: #F44336;
+        color: white;
+    }
+    
+    @media (max-width: 992px) {
+        .calendar-layout {
+            grid-template-columns: 1fr;
+        }
+        
+        .summary-cards {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .summary-cards {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="appointments-container">
+    <div class="page-header">
+        <a href="{{ url_for('index') }}" class="back-button">
+            <i class="fas fa-arrow-right"></i>
+        </a>
+        <h1 class="page-title">جدولة المواعيد</h1>
+    </div>
+    
+    <!-- بطاقات ملخص المواعيد -->
+    <div class="summary-cards">
+        <div class="summary-card total">
+            <div class="summary-value" id="total-appointments">{{ appointments|length }}</div>
+            <div class="summary-label">إجمالي المواعيد</div>
+        </div>
+        <div class="summary-card scheduled">
+            <div class="summary-value" id="scheduled-appointments">{{ appointments|selectattr('status', 'equalto', 'scheduled')|list|length }}</div>
+            <div class="summary-label">مواعيد مجدولة</div>
+        </div>
+        <div class="summary-card completed">
+            <div class="summary-value" id="completed-appointments">{{ appointments|selectattr('status', 'equalto', 'completed')|list|length }}</div>
+            <div class="summary-label">مواعيد مكتملة</div>
+        </div>
+        <div class="summary-card cancelled">
+            <div class="summary-value" id="cancelled-appointments">{{ appointments|selectattr('status', 'equalto', 'cancelled')|list|length }}</div>
+            <div class="summary-label">مواعيد ملغاة</div>
+        </div>
+    </div>
+    
+    <div class="calendar-layout">
+        <div class="calendar-card">
+            <div id="calendar"></div>
+        </div>
+        
+        <div class="sidebar-card">
+            <h2 class="sidebar-title">خيارات العرض</h2>
+            
+            <div class="filter-group">
+                <div class="filter-label">المسوق</div>
+                <select id="agent-filter" class="agent-select">
+                    <option value="all">جميع المسوقين</option>
+                    {% for agent in agents %}
+                    <option value="{{ agent.id }}">{{ agent.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <div class="filter-label">حالة المواعيد</div>
+                <div class="status-checkboxes">
+                    <div class="status-checkbox">
+                        <input type="checkbox" id="status-scheduled" value="scheduled" checked>
+                        <label for="status-scheduled">مواعيد مجدولة</label>
+                    </div>
+                    <div class="status-checkbox">
+                        <input type="checkbox" id="status-completed" value="completed" checked>
+                        <label for="status-completed">مواعيد مكتملة</label>
+                    </div>
+                    <div class="status-checkbox">
+                        <input type="checkbox" id="status-cancelled" value="cancelled" checked>
+                        <label for="status-cancelled">مواعيد ملغاة</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="add-appointment-btn" class="add-appointment-btn">
+                <i class="fas fa-plus"></i>
+                إضافة موعد جديد
+            </button>
+        </div>
+    </div>
+    
+    <!-- مودال إضافة موعد جديد -->
+    <div id="appointment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">إضافة موعد جديد</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="appointment-form">
+                <div class="form-group">
+                    <label class="form-label" for="appointment-agent">المسوق</label>
+                    <select class="form-control" id="appointment-agent" required>
+                        <option value="">اختر المسوق</option>
+                        {% for agent in agents %}
+                        <option value="{{ agent.id }}">{{ agent.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="appointment-property">العقار</label>
+                    <select class="form-control" id="appointment-property" required>
+                        <option value="">اختر العقار</option>
+                        <!-- سيتم تعبئة هذه القائمة ديناميكيًا بناءً على المسوق المحدد -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="appointment-date">التاريخ</label>
+                    <input class="form-control" type="date" id="appointment-date" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="appointment-time">الوقت</label>
+                    <input class="form-control" type="time" id="appointment-time" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="appointment-client-name">اسم العميل</label>
+                    <input class="form-control" type="text" id="appointment-client-name" placeholder="أدخل اسم العميل" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="appointment-client-phone">هاتف العميل</label>
+                    <input class="form-control" type="text" id="appointment-client-phone" placeholder="أدخل رقم هاتف العميل" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="appointment-notes">ملاحظات</label>
+                    <textarea class="form-control" id="appointment-notes" rows="3" placeholder="أدخل ملاحظات إضافية"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">حفظ الموعد</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- مودال عرض تفاصيل الموعد -->
+    <div id="appointment-details-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">تفاصيل الموعد</h3>
+                <span class="close-details-modal">&times;</span>
+            </div>
+            <div class="appointment-details">
+                <div class="detail-row">
+                    <div class="detail-label">اسم العميل:</div>
+                    <div class="detail-value" id="detail-client-name"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">هاتف العميل:</div>
+                    <div class="detail-value" id="detail-client-phone"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">التاريخ والوقت:</div>
+                    <div class="detail-value" id="detail-date-time"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">المسوق:</div>
+                    <div class="detail-value" id="detail-agent"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">العقار:</div>
+                    <div class="detail-value" id="detail-property"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">الحالة:</div>
+                    <div class="detail-value" id="detail-status"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">ملاحظات:</div>
+                    <div class="detail-value" id="detail-notes"></div>
+                </div>
+                
+                <div class="status-actions">
+                    <h4>تغيير الحالة</h4>
+                    <div class="status-buttons">
+                        <button class="status-btn scheduled" data-status="scheduled">مجدول</button>
+                        <button class="status-btn completed" data-status="completed">مكتمل</button>
+                        <button class="status-btn cancelled" data-status="cancelled">ملغي</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/locales/ar.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // الحصول على بيانات المواعيد من الخادم
+        const allAppointments = {{ appointments_data|safe }};
+        const agents = {{ agents_data|safe }};
+        
+        // إنشاء التقويم
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            locale: 'ar',
+            direction: 'rtl',
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                right: 'prev,next today',
+                center: 'title',
+                left: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            buttonText: {
+                today: 'اليوم',
+                month: 'شهر',
+                week: 'أسبوع',
+                day: 'يوم'
+            },
+            events: allAppointments,
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: false,
+                hour12: false
+            },
+            eventClick: function(info) {
+                // عند النقر على موعد، عرض تفاصيله
+                showAppointmentDetails(info.event);
+            },
+            dateClick: function(info) {
+                // عند النقر على تاريخ، فتح مودال إضافة موعد جديد مع تعيين التاريخ
+                document.getElementById('appointment-date').value = info.dateStr;
+                openAppointmentModal();
+            }
+        });
+        
+        // عرض التقويم
+        calendar.render();
+        
+        // تصفية المواعيد حسب المسوق
+        document.getElementById('agent-filter').addEventListener('change', function() {
+            filterAppointments();
+        });
+        
+        // تصفية المواعيد حسب الحالة
+        document.querySelectorAll('.status-checkboxes input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                filterAppointments();
+            });
+        });
+        
+        // وظيفة تصفية المواعيد
+        function filterAppointments() {
+            const selectedAgentId = document.getElementById('agent-filter').value;
+            const selectedStatuses = [];
+            
+            // جمع الحالات المحددة
+            document.querySelectorAll('.status-checkboxes input[type="checkbox"]:checked').forEach(checkbox => {
+                selectedStatuses.push(checkbox.value);
+            });
+            
+            // فلترة المواعيد
+            const filteredAppointments = allAppointments.filter(appointment => {
+                // فلترة حسب المسوق
+                const agentMatch = selectedAgentId === 'all' || appointment.agent_id === selectedAgentId;
+                
+                // فلترة حسب الحالة
+                const statusMatch = selectedStatuses.includes(appointment.status);
+                
+                return agentMatch && statusMatch;
+            });
+            
+            // تحديث المواعيد في التقويم
+            calendar.removeAllEvents();
+            calendar.addEventSource(filteredAppointments);
+        }
+        
+        // عرض تفاصيل الموعد
+        function showAppointmentDetails(event) {
+            const appointment = event.extendedProps;
+            
+            // ملء بيانات المودال
+            document.getElementById('detail-client-name').textContent = appointment.client_name;
+            document.getElementById('detail-client-phone').textContent = appointment.client_phone;
+            
+            // تنسيق التاريخ والوقت
+            const appointmentDate = new Date(event.start);
+            const formattedDate = new Intl.DateTimeFormat('ar-SA', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(appointmentDate);
+            
+            document.getElementById('detail-date-time').textContent = formattedDate;
+            document.getElementById('detail-agent').textContent = appointment.agent_name;
+            document.getElementById('detail-property').textContent = appointment.property_title || 'غير محدد';
+            
+            // تحديد الحالة المناسبة
+            const statusText = getStatusName(appointment.status);
+            document.getElementById('detail-status').textContent = statusText;
+            document.getElementById('detail-status').className = `detail-value status-${appointment.status}`;
+            
+            document.getElementById('detail-notes').textContent = appointment.notes || 'لا توجد ملاحظات';
+            
+            // تحديد حالة الأزرار
+            const statusButtons = document.querySelectorAll('.status-btn');
+            statusButtons.forEach(button => {
+                if(button.getAttribute('data-status') === appointment.status) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+                
+                // إضافة حدث لتغيير الحالة
+                button.onclick = function() {
+                    const newStatus = this.getAttribute('data-status');
+                    updateAppointmentStatus(appointment.id, newStatus);
+                };
+            });
+            
+            // فتح المودال
+            document.getElementById('appointment-details-modal').style.display = 'block';
+        }
+        
+        // تحديث حالة الموعد
+        function updateAppointmentStatus(appointmentId, newStatus) {
+            // إظهار رسالة التحميل
+            const statusElement = document.getElementById('detail-status');
+            const originalStatusText = statusElement.textContent;
+            statusElement.textContent = 'جاري التحديث...';
+            
+            // إرسال طلب لتحديث الحالة
+            fetch('/api/appointments/update-status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    appointment_id: appointmentId,
+                    status: newStatus
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    // تحديث حالة الزر
+                    document.querySelectorAll('.status-btn').forEach(button => {
+                        if(button.getAttribute('data-status') === newStatus) {
+                            button.classList.add('active');
+                        } else {
+                            button.classList.remove('active');
+                        }
+                    });
+                    
+                    // تحديث نص الحالة
+                    statusElement.textContent = getStatusName(newStatus);
+                    statusElement.className = `detail-value status-${newStatus}`;
+                    
+                    // تحديث الموعد في القائمة الكاملة
+                    for(let i = 0; i < allAppointments.length; i++) {
+                        if(allAppointments[i].id === appointmentId) {
+                            allAppointments[i].status = newStatus;
+                            
+                            // تحديث لون الموعد في التقويم
+                            let color = '#2196F3'; // أزرق للمواعيد المجدولة
+                            if(newStatus === 'completed') {
+                                color = '#4CAF50'; // أخضر للمواعيد المكتملة
+                            } else if(newStatus === 'cancelled') {
+                                color = '#F44336'; // أحمر للمواعيد الملغاة
+                            }
+                            
+                            // تحديث الموعد في التقويم
+                            const event = calendar.getEventById(appointmentId);
+                            if(event) {
+                                event.setProp('backgroundColor', color);
+                                event.setExtendedProp('status', newStatus);
+                            }
+                            
+                            break;
+                        }
+                    }
+                    
+                    // تحديث أرقام الملخص
+                    updateSummaryCounters();
+                    
+                    // إشعار المستخدم بنجاح التحديث
+                    alert('تم تحديث حالة الموعد بنجاح');
+                } else {
+                    // إرجاع النص الأصلي في حالة الخطأ
+                    statusElement.textContent = originalStatusText;
+                    alert(`خطأ: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                // إرجاع النص الأصلي في حالة الخطأ
+                statusElement.textContent = originalStatusText;
+                console.error('خطأ في تحديث حالة الموعد:', error);
+                alert('حدث خطأ أثناء محاولة تحديث الحالة. يرجى المحاولة مرة أخرى.');
+            });
+        }
+        
+        // تحديث أرقام الملخص
+        function updateSummaryCounters() {
+            const totalAppointments = allAppointments.length;
+            const scheduledAppointments = allAppointments.filter(a => a.status === 'scheduled').length;
+            const completedAppointments = allAppointments.filter(a => a.status === 'completed').length;
+            const cancelledAppointments = allAppointments.filter(a => a.status === 'cancelled').length;
+            
+            document.getElementById('total-appointments').textContent = totalAppointments;
+            document.getElementById('scheduled-appointments').textContent = scheduledAppointments;
+            document.getElementById('completed-appointments').textContent = completedAppointments;
+            document.getElementById('cancelled-appointments').textContent = cancelledAppointments;
+        }
+        
+        // تحويل حالة الموعد إلى نص مناسب
+        function getStatusName(status) {
+            switch(status) {
+                case 'scheduled': return 'مجدول';
+                case 'completed': return 'مكتمل';
+                case 'cancelled': return 'ملغي';
+                default: return status;
+            }
+        }
+        
+        // إضافة موعد جديد - تعريف المودال
+        const modal = document.getElementById('appointment-modal');
+        const addAppointmentBtn = document.getElementById('add-appointment-btn');
+        const closeModalBtn = document.querySelector('.close-modal');
+        const appointmentForm = document.getElementById('appointment-form');
+        const agentSelect = document.getElementById('appointment-agent');
+        const propertySelect = document.getElementById('appointment-property');
+        
+        // عند تغيير المسوق، جلب العقارات المرتبطة به
+        agentSelect.addEventListener('change', function() {
+            const agentId = this.value;
+            if (!agentId) {
+                // إفراغ قائمة العقارات إذا لم يتم اختيار مسوق
+                propertySelect.innerHTML = '<option value="">اختر العقار</option>';
+                return;
+            }
+            
+            // جلب العقارات من الخادم
+            fetchAgentProperties(agentId);
+        });
+        
+        // وظيفة جلب عقارات المسوق من الخادم
+        function fetchAgentProperties(agentId) {
+            // إظهار رسالة تحميل
+            propertySelect.innerHTML = '<option value="">جاري تحميل العقارات...</option>';
+            
+            // إرسال طلب للحصول على العقارات
+            fetch(`/api/agents/${agentId}/properties`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // تعبئة قائمة العقارات
+                        propertySelect.innerHTML = '<option value="">اختر العقار</option>';
+                        
+                        if (data.properties.length === 0) {
+                            propertySelect.innerHTML += '<option value="" disabled>لا توجد عقارات متاحة لهذا المسوق</option>';
+                        } else {
+                            data.properties.forEach(property => {
+                                propertySelect.innerHTML += `<option value="${property.id}">${property.title} - ${property.location}</option>`;
+                            });
+                        }
+                    } else {
+                        // عرض رسالة خطأ
+                        propertySelect.innerHTML = '<option value="">خطأ في تحميل العقارات</option>';
+                        console.error('خطأ في تحميل العقارات:', data.message);
+                    }
+                })
+                .catch(error => {
+                    propertySelect.innerHTML = '<option value="">خطأ في تحميل العقارات</option>';
+                    console.error('خطأ في تحميل العقارات:', error);
+                });
+        }
+        
+        // فتح المودال
+        addAppointmentBtn.addEventListener('click', function() {
+            openAppointmentModal();
+        });
+        
+        // وظيفة فتح المودال
+        function openAppointmentModal() {
+            modal.style.display = 'block';
+            // تعيين التاريخ الحالي إذا لم يكن معينًا بالفعل
+            if (!document.getElementById('appointment-date').value) {
+                const today = new Date();
+                const formattedDate = today.toISOString().split('T')[0];
+                document.getElementById('appointment-date').value = formattedDate;
+            }
+        }
+        
+        // إغلاق المودال
+        closeModalBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        // إغلاق المودال عند النقر خارجه
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // إرسال نموذج إضافة موعد
+        appointmentForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const agentId = document.getElementById('appointment-agent').value;
+            const propertyId = document.getElementById('appointment-property').value;
+            const appointmentDate = document.getElementById('appointment-date').value;
+            const appointmentTime = document.getElementById('appointment-time').value;
+            const clientName = document.getElementById('appointment-client-name').value;
+            const clientPhone = document.getElementById('appointment-client-phone').value;
+            const notes = document.getElementById('appointment-notes').value;
+            
+            // تحضير بيانات الموعد لإرسالها إلى الخادم
+            const appointmentData = {
+                agent_id: agentId,
+                property_id: propertyId,
+                date: `${appointmentDate}T${appointmentTime}`,
+                client_name: clientName,
+                client_phone: clientPhone,
+                notes: notes
+            };
+            
+            // إرسال البيانات إلى الخادم عبر طلب AJAX
+            fetch('/api/appointments/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(appointmentData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // إغلاق المودال
+                    modal.style.display = 'none';
+                    
+                    // تنظيف النموذج
+                    appointmentForm.reset();
+                    
+                    // إشعار المستخدم بنجاح الإضافة
+                    alert('تم حفظ الموعد بنجاح!');
+                    
+                    // إضافة الموعد الجديد إلى التقويم وتحديث قائمة المواعيد
+                    const newAppointment = data.appointment;
+                    
+                    // جلب معلومات إضافية عن الموعد
+                    const agent = agents.find(a => a.id === newAppointment.agent_id);
+                    
+                    // تحضير بيانات الموعد للعرض في التقويم
+                    const calendarEvent = {
+                        id: newAppointment.id,
+                        title: `${newAppointment.client_name}`,
+                        start: newAppointment.date,
+                        agent_id: newAppointment.agent_id,
+                        agent_name: agent ? agent.name : 'غير معروف',
+                        property_id: newAppointment.property_id,
+                        client_name: newAppointment.client_name,
+                        client_phone: newAppointment.client_phone,
+                        status: newAppointment.status,
+                        notes: newAppointment.notes,
+                        color: '#2196F3' // أزرق للمواعيد المجدولة
+                    };
+                    
+                    // إضافة الموعد إلى القائمة الكاملة والتقويم
+                    allAppointments.push(calendarEvent);
+                    calendar.addEvent(calendarEvent);
+                    
+                    // إعادة تطبيق الفلاتر
+                    filterAppointments();
+                } else {
+                    // عرض رسالة الخطأ
+                    alert(`خطأ: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error('خطأ في إرسال بيانات الموعد:', error);
+                alert('حدث خطأ أثناء محاولة حفظ الموعد. يرجى المحاولة مرة أخرى.');
+            });
+        });
+        
+        // إغلاق مودال التفاصيل
+        const detailsModal = document.getElementById('appointment-details-modal');
+        const closeDetailsModalBtn = document.querySelector('.close-details-modal');
+        
+        closeDetailsModalBtn.addEventListener('click', function() {
+            detailsModal.style.display = 'none';
+        });
+        
+        // إغلاق المودال عند النقر خارجه
+        window.addEventListener('click', function(event) {
+            if (event.target === detailsModal) {
+                detailsModal.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,528 @@
+{% extends "base.html" %}
+
+{% block title %}تقارير الأداء - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important;
+    }
+    
+    .reports-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .back-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--card-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-color);
+        font-size: 18px;
+        margin-left: 15px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .page-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .kpi-card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+    
+    .kpi-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .kpi-icon {
+        font-size: 28px;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+    }
+    
+    .kpi-title {
+        font-size: 14px;
+        color: var(--muted-text);
+        margin-bottom: 10px;
+    }
+    
+    .kpi-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+    
+    .kpi-change {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+    
+    .change-up {
+        color: #4CAF50;
+    }
+    
+    .change-down {
+        color: #F44336;
+    }
+    
+    .chart-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .chart-card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .chart-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 20px;
+    }
+    
+    .chart-container {
+        height: 300px;
+        position: relative;
+    }
+    
+    .heatmap-card {
+        grid-column: span 2;
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .heatmap-container {
+        height: 400px;
+    }
+    
+    .trends-card {
+        grid-column: span 2;
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+    }
+    
+    .period-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .period-btn {
+        padding: 8px 15px;
+        background-color: var(--background-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-family: 'Cairo', sans-serif;
+        color: var(--text-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .period-btn:hover, .period-btn.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .custom-report-btn {
+        margin-right: auto;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 15px;
+        font-family: 'Cairo', sans-serif;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .custom-report-btn:hover {
+        background-color: #c39f31;
+    }
+    
+    /* التخطيط المستجيب */
+    @media (max-width: 992px) {
+        .dashboard-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .chart-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .heatmap-card, .trends-card {
+            grid-column: span 1;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reports-container">
+    <div class="page-header">
+        <a href="{{ url_for('index') }}" class="back-button">
+            <i class="fas fa-arrow-right"></i>
+        </a>
+        <h1 class="page-title">تقارير الأداء</h1>
+    </div>
+    
+    <div class="dashboard-grid">
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="kpi-title">إجمالي العقارات</div>
+            <div class="kpi-value">{{ total_properties }}</div>
+            <div class="kpi-change change-up">
+                <i class="fas fa-arrow-up"></i>
+                <span>{{ property_growth }}%</span>
+            </div>
+        </div>
+        
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="kpi-title">إجمالي المبيعات</div>
+            <div class="kpi-value">{{ total_sales|format_price }}</div>
+            <div class="kpi-change change-up">
+                <i class="fas fa-arrow-up"></i>
+                <span>{{ sales_growth }}%</span>
+            </div>
+        </div>
+        
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fas fa-eye"></i>
+            </div>
+            <div class="kpi-title">إجمالي المشاهدات</div>
+            <div class="kpi-value">{{ total_views|format_price }}</div>
+            <div class="kpi-change change-up">
+                <i class="fas fa-arrow-up"></i>
+                <span>{{ views_growth }}%</span>
+            </div>
+        </div>
+        
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <div class="kpi-title">إجمالي الاستفسارات</div>
+            <div class="kpi-value">{{ total_inquiries }}</div>
+            <div class="kpi-change change-down">
+                <i class="fas fa-arrow-down"></i>
+                <span>{{ inquiries_growth }}%</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="trends-card">
+        <div class="chart-title">تحليل اتجاهات السوق</div>
+        <div class="period-selector">
+            <button class="period-btn active" data-period="week">أسبوع</button>
+            <button class="period-btn" data-period="month">شهر</button>
+            <button class="period-btn" data-period="quarter">ربع سنوي</button>
+            <button class="period-btn" data-period="year">سنة</button>
+            <button class="custom-report-btn">تقرير مخصص</button>
+        </div>
+        <div class="chart-container">
+            <canvas id="trendsChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="chart-row">
+        <div class="chart-card">
+            <div class="chart-title">المبيعات حسب نوع العقار</div>
+            <div class="chart-container">
+                <canvas id="propertyCategoryChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-card">
+            <div class="chart-title">أداء المسوقين</div>
+            <div class="chart-container">
+                <canvas id="agentsPerformanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="heatmap-card">
+        <div class="chart-title">خريطة حرارية للمناطق الأكثر نشاطاً</div>
+        <div class="heatmap-container">
+            <div id="mapContainer" style="width: 100%; height: 100%;"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // البيانات الواردة من الخادم
+        const trendsData = JSON.parse('{{ market_trends|tojson|safe }}');
+        const categorySalesData = JSON.parse('{{ category_sales|tojson|safe }}');
+        const agentPerformanceData = JSON.parse('{{ agent_performance|tojson|safe }}');
+        const heatmapData = JSON.parse('{{ heatmap_data|tojson|safe }}');
+        
+        // رسم بياني لاتجاهات السوق
+        const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+        const trendsChart = new Chart(trendsCtx, {
+            type: 'line',
+            data: {
+                labels: trendsData.labels,
+                datasets: [
+                    {
+                        label: 'المبيعات',
+                        data: trendsData.sales,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'المشاهدات',
+                        data: trendsData.views,
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'الاستفسارات',
+                        data: trendsData.inquiries,
+                        borderColor: '#9C27B0',
+                        backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: 'Tajawal'
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                family: 'Roboto'
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: 'Tajawal'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // رسم بياني للمبيعات حسب نوع العقار
+        const categoryCtx = document.getElementById('propertyCategoryChart').getContext('2d');
+        const categoryChart = new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: categorySalesData.labels,
+                datasets: [{
+                    data: categorySalesData.data,
+                    backgroundColor: [
+                        '#4CAF50',
+                        '#2196F3',
+                        '#FFC107',
+                        '#9C27B0',
+                        '#F44336',
+                        '#00BCD4'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            font: {
+                                family: 'Tajawal'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // رسم بياني لأداء المسوقين
+        const agentsCtx = document.getElementById('agentsPerformanceChart').getContext('2d');
+        const agentsChart = new Chart(agentsCtx, {
+            type: 'bar',
+            data: {
+                labels: agentPerformanceData.labels,
+                datasets: [{
+                    label: 'المبيعات',
+                    data: agentPerformanceData.sales,
+                    backgroundColor: '#4CAF50'
+                },
+                {
+                    label: 'الاستفسارات',
+                    data: agentPerformanceData.inquiries,
+                    backgroundColor: '#2196F3'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: 'Tajawal'
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                family: 'Roboto'
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: 'Tajawal'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // خريطة حرارية للمناطق
+        const map = L.map('mapContainer').setView([24.7136, 46.6753], 12); // موقع الرياض
+        
+        // إضافة طبقة الخريطة
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // إضافة البيانات على الخريطة
+        heatmapData.forEach(point => {
+            const marker = L.marker([point.lat, point.lng]).addTo(map);
+            marker.bindPopup(`
+                <div style="text-align: right; direction: rtl;">
+                    <strong>${point.title}</strong><br>
+                    ${point.views} مشاهدة<br>
+                    ${point.inquiries} استفسار
+                </div>
+            `);
+        });
+        
+        // معالجة أزرار فترة التقرير
+        const periodBtns = document.querySelectorAll('.period-btn');
+        periodBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // إزالة الحالة النشطة من جميع الأزرار
+                periodBtns.forEach(b => b.classList.remove('active'));
+                
+                // تفعيل الزر الحالي
+                this.classList.add('active');
+                
+                // الحصول على الفترة المحددة
+                const period = this.getAttribute('data-period');
+                
+                // تحديث بيانات الرسم البياني (يمكن إضافة طلب AJAX هنا لجلب البيانات الجديدة)
+                // للتبسيط، سنقوم فقط بتغيير البيانات الحالية بطريقة عشوائية
+                
+                // تحديث رسم بياني الاتجاهات
+                trendsChart.data.datasets.forEach(dataset => {
+                    dataset.data = dataset.data.map(() => Math.floor(Math.random() * 1000));
+                });
+                trendsChart.update();
+            });
+        });
+        
+        // معالجة زر التقرير المخصص
+        document.querySelector('.custom-report-btn').addEventListener('click', function() {
+            alert('سيتم إضافة خيارات التقرير المخصص قريباً');
+        });
+    });
+</script>
+{% endblock %}

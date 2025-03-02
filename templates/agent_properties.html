@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+
+{% block title %}إدارة العقارات - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important; /* إضافة مساحة في الأسفل للشريط السفلي */
+    }
+    
+    .agent-properties-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .page-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .add-property-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .add-property-btn i {
+        margin-left: 8px;
+    }
+    
+    .add-property-btn:hover {
+        background-color: #c49f33;
+        transform: translateY(-2px);
+    }
+    
+    .filters-section {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .filter-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 15px;
+        transition: color 0.3s ease;
+    }
+    
+    .filter-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .filter-option {
+        background-color: var(--action-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 8px 15px;
+        font-size: 14px;
+        color: var(--text-color);
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .filter-option.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .filter-option:hover:not(.active) {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+    
+    .properties-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .property-card {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .property-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .property-image-container {
+        position: relative;
+        height: 200px;
+    }
+    
+    .property-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .property-status {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        z-index: 2;
+    }
+    
+    .status-active {
+        background-color: #2ECC71;
+        color: white;
+    }
+    
+    .status-pending {
+        background-color: #F39C12;
+        color: white;
+    }
+    
+    .status-sold {
+        background-color: #E74C3C;
+        color: white;
+    }
+    
+    .property-info {
+        padding: 15px;
+    }
+    
+    .property-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+    }
+    
+    .property-location {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+    }
+    
+    .property-location i {
+        margin-left: 5px;
+        color: var(--primary-color);
+    }
+    
+    .property-price {
+        font-family: 'Roboto', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+    }
+    
+    .property-stats {
+        display: flex;
+        justify-content: space-between;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-color);
+        transition: border-color 0.3s ease;
+    }
+    
+    .property-stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .stat-value {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    
+    .property-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+        transition: border-color 0.3s ease;
+    }
+    
+    .property-action-btn {
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+    
+    .edit-btn {
+        background-color: var(--info-color);
+        color: white;
+        border: none;
+    }
+    
+    .edit-btn:hover {
+        background-color: #3a7bc8;
+    }
+    
+    .delete-btn {
+        background-color: var(--alert-color);
+        color: white;
+        border: none;
+    }
+    
+    .delete-btn:hover {
+        background-color: #c0392b;
+    }
+    
+    .view-btn {
+        background-color: var(--action-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .view-btn:hover {
+        background-color: var(--border-color);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .empty-icon {
+        font-size: 60px;
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+        transition: color 0.3s ease;
+    }
+    
+    .empty-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+    }
+    
+    .empty-message {
+        font-size: 16px;
+        color: var(--text-secondary);
+        margin-bottom: 25px;
+        transition: color 0.3s ease;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    
+    .pagination-item {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 5px;
+        border-radius: 50%;
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+    }
+    
+    .pagination-item.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .pagination-item:hover:not(.active) {
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+        .properties-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+        
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .add-property-btn {
+            margin-top: 15px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="agent-properties-container">
+    <div class="page-header">
+        <h1 class="page-title">إدارة العقارات</h1>
+        <a href="{{ url_for('add_property') }}" class="add-property-btn">
+            <i class="fas fa-plus"></i>
+            إضافة عقار جديد
+        </a>
+    </div>
+    
+    <div class="filters-section">
+        <div class="filter-title">تصفية العقارات</div>
+        <div class="filter-options">
+            <div class="filter-option active" data-filter="all">الكل</div>
+            <div class="filter-option" data-filter="active">نشط</div>
+            <div class="filter-option" data-filter="pending">قيد المراجعة</div>
+            <div class="filter-option" data-filter="sold">تم البيع</div>
+        </div>
+    </div>
+    
+    {% if agent_properties %}
+    <div class="properties-grid">
+        {% for property in agent_properties %}
+        <div class="property-card" data-status="{{ property.status }}">
+            <div class="property-image-container">
+                <img src="{{ property.images[0] }}" alt="{{ property.title }}" class="property-image">
+                <div class="property-status status-{{ property.status }}">
+                    {% if property.status == 'active' %}
+                        معروض
+                    {% elif property.status == 'pending' %}
+                        قيد المراجعة
+                    {% elif property.status == 'sold' %}
+                        تم البيع
+                    {% endif %}
+                </div>
+            </div>
+            <div class="property-info">
+                <h3 class="property-title">{{ property.title }}</h3>
+                <div class="property-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{ property.location }}
+                </div>
+                <div class="property-price">{{ property.price|format_price }} ريال</div>
+                <div class="property-stats">
+                    <div class="property-stat">
+                        <div class="stat-value">{{ property.bedrooms }}</div>
+                        <div class="stat-label">غرف</div>
+                    </div>
+                    <div class="property-stat">
+                        <div class="stat-value">{{ property.bathrooms }}</div>
+                        <div class="stat-label">حمامات</div>
+                    </div>
+                    <div class="property-stat">
+                        <div class="stat-value">{{ property.area }}</div>
+                        <div class="stat-label">م²</div>
+                    </div>
+                </div>
+                <div class="property-actions">
+                    <a href="{{ url_for('edit_property', property_id=property.id) }}" class="property-action-btn edit-btn">تعديل</a>
+                    <a href="{{ url_for('property_details', property_id=property.id) }}" class="property-action-btn view-btn">عرض</a>
+                    <button class="property-action-btn delete-btn" onclick="confirmDelete('{{ property.id }}')">حذف</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="pagination">
+        <div class="pagination-item"><i class="fas fa-chevron-right"></i></div>
+        <div class="pagination-item active">1</div>
+        <div class="pagination-item">2</div>
+        <div class="pagination-item">3</div>
+        <div class="pagination-item"><i class="fas fa-chevron-left"></i></div>
+    </div>
+    
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="fas fa-home"></i>
+        </div>
+        <h2 class="empty-title">لا توجد عقارات</h2>
+        <p class="empty-message">لم تقم بإضافة أي عقارات بعد. أضف عقارك الأول الآن!</p>
+        <a href="{{ url_for('add_property') }}" class="add-property-btn">
+            <i class="fas fa-plus"></i>
+            إضافة عقار جديد
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // تصفية العقارات
+        const filterOptions = document.querySelectorAll('.filter-option');
+        const propertyCards = document.querySelectorAll('.property-card');
+        
+        filterOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // إزالة الفلتر النشط
+                filterOptions.forEach(opt => opt.classList.remove('active'));
+                // تفعيل الفلتر الحالي
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                // تطبيق الفلتر على العقارات
+                propertyCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-status') === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // تأكيد حذف العقار
+        window.confirmDelete = function(propertyId) {
+            if (confirm('هل أنت متأكد من رغبتك في حذف هذا العقار؟')) {
+                window.location.href = `/delete_property/${propertyId}`;
+            }
+        };
+    });
+</script>
+{% endblock %}

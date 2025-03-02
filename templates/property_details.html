@@ -1,0 +1,612 @@
+{% extends "base.html" %}
+
+{% block title %}{{ property.title }} - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important; /* إضافة مساحة في الأسفل للشريط السفلي */
+    }
+    
+    .property-details-container {
+        padding-bottom: 70px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .property-content {
+        padding: 20px;
+    }
+    
+    .property-header {
+        margin-bottom: 20px;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .property-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    .property-location {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+    }
+    
+    .property-price {
+        font-family: 'Roboto', sans-serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary-color);
+        transition: color 0.3s ease;
+    }
+    
+    .property-stats {
+        display: flex;
+        justify-content: space-between;
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeIn 0.5s ease;
+        animation-delay: 0.1s;
+        animation-fill-mode: both;
+    }
+    
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-item:hover {
+        transform: translateY(-3px);
+    }
+    
+    .stat-icon {
+        font-size: 24px;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    .stat-value {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    
+    .property-section {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeIn 0.5s ease;
+        animation-fill-mode: both;
+    }
+    
+    .property-section:nth-child(3) {
+        animation-delay: 0.2s;
+    }
+    
+    .property-section:nth-child(4) {
+        animation-delay: 0.3s;
+    }
+    
+    .property-section:nth-child(5) {
+        animation-delay: 0.4s;
+    }
+    
+    .section-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        transition: color 0.3s ease;
+    }
+    
+    .section-title i {
+        color: var(--primary-color);
+        margin-left: 8px;
+        transition: color 0.3s ease;
+    }
+    
+    .property-description {
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .features-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .feature-item {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: var(--text-color);
+        transition: color 0.3s ease, transform 0.3s ease;
+        padding: 5px 0;
+    }
+    
+    .feature-item:hover {
+        transform: translateX(-5px);
+    }
+    
+    .feature-item i {
+        color: var(--primary-color);
+        margin-left: 8px;
+        font-size: 16px;
+        transition: color 0.3s ease;
+    }
+    
+    .agent-info {
+        display: flex;
+        align-items: center;
+    }
+    
+    .agent-image {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-left: 15px;
+        border: 2px solid var(--primary-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .agent-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .agent-details {
+        flex-grow: 1;
+    }
+    
+    .agent-name {
+        font-family: 'Cairo', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 3px;
+        transition: color 0.3s ease;
+    }
+    
+    .agent-title {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    .agent-rating {
+        color: var(--primary-color);
+        font-size: 14px;
+        transition: color 0.3s ease;
+    }
+    
+    .contact-agent {
+        display: flex;
+        margin-top: 15px;
+    }
+    
+    .contact-button {
+        flex: 1;
+        background-color: var(--card-bg);
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+        border-radius: 8px;
+        padding: 10px;
+        margin-left: 10px;
+        font-size: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    
+    .contact-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .contact-button i {
+        margin-left: 5px;
+    }
+    
+    .contact-button.primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .contact-button.primary:hover {
+        background-color: #c09c31;
+    }
+    
+    .map-container {
+        height: 200px;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .map-placeholder {
+        width: 100%;
+        height: 100%;
+        background-color: var(--action-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-secondary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .book-button {
+        position: fixed;
+        bottom: 70px;
+        right: 15px;
+        left: 15px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 15px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        z-index: 5;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .book-button:hover {
+        background-color: #c09c31;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .btn-book {
+        display: block;
+        width: 100%;
+        font-size: 16px;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: var(--primary-color);
+        color: white !important;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .btn-book:hover {
+        background-color: #c09c31;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        color: white !important;
+        text-decoration: none;
+    }
+    
+    .book-text {
+        display: inline-block;
+        color: white !important;
+    }
+    
+    .book-appointment-container {
+        margin: 20px 0;
+        padding: 0 15px;
+    }
+    
+    .btn-block {
+        display: block;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .main-video {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .back-button {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        font-size: 18px;
+        z-index: 2;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    
+    .back-button:hover {
+        background-color: var(--primary-color);
+        transform: scale(1.1);
+    }
+    
+    .share-button {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        font-size: 18px;
+        z-index: 2;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    
+    .share-button:hover {
+        background-color: var(--primary-color);
+        transform: scale(1.1);
+    }
+    
+    .image-gallery {
+        padding: 15px;
+        overflow-x: auto;
+        white-space: nowrap;
+        background-color: var(--card-bg);
+        transition: background-color 0.3s ease;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .gallery-image {
+        width: 120px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-left: 10px;
+        display: inline-block;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .gallery-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Dark mode specific styles */
+    .dark-mode .property-stats,
+    .dark-mode .property-section {
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    .dark-mode .main-video {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="property-details-container">
+    <div style="position: relative;">
+        <a href="{{ url_for('index') }}" class="back-button">
+            <i class="fas fa-arrow-right"></i>
+        </a>
+        <div class="share-button">
+            <i class="fas fa-share-alt"></i>
+        </div>
+        <video class="main-video" src="{{ property.videos[0] }}" controls></video>
+    </div>
+    
+    <div class="image-gallery">
+        {% for image in property.images %}
+        <img src="{{ image }}" alt="{{ property.title }}" class="gallery-image">
+        {% endfor %}
+    </div>
+    
+    <div class="property-content">
+        <div class="property-header">
+            <h1 class="property-title">{{ property.title }}</h1>
+            <div class="property-location">
+                <i class="fas fa-map-marker-alt"></i> {{ property.location }}
+            </div>
+            <div class="property-price">{{ property.price | format_price }} ريال</div>
+        </div>
+        
+        <div class="property-stats">
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-ruler-combined"></i></div>
+                <div class="stat-value">{{ property.area }}</div>
+                <div class="stat-label">متر مربع</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-bed"></i></div>
+                <div class="stat-value">{{ property.bedrooms }}</div>
+                <div class="stat-label">غرف نوم</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-bath"></i></div>
+                <div class="stat-value">{{ property.bathrooms }}</div>
+                <div class="stat-label">حمامات</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-car"></i></div>
+                <div class="stat-value">{{ property.garages }}</div>
+                <div class="stat-label">مواقف</div>
+            </div>
+        </div>
+        
+        <div class="book-appointment-container">
+            <a href="{{ url_for('book_appointment_route', property_id=property.id) }}" class="btn-book btn-block">
+                <i class="far fa-calendar-alt"></i> <span class="book-text"><span>حجز موعد معاينة</span></span>
+            </a>
+        </div>
+        
+        <div class="property-section">
+            <h2 class="section-title">
+                <i class="fas fa-info-circle"></i>
+                وصف العقار
+            </h2>
+            <div class="property-description">
+                {{ property.description }}
+            </div>
+        </div>
+        
+        <div class="property-section">
+            <h2 class="section-title">
+                <i class="fas fa-list"></i>
+                المميزات والمرافق
+            </h2>
+            <div class="features-list">
+                {% for feature in property.features %}
+                <div class="feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    {{ feature }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="property-section">
+            <h2 class="section-title">
+                <i class="fas fa-map-marked-alt"></i>
+                الموقع
+            </h2>
+            <div class="map-container">
+                <div class="map-placeholder">
+                    <i class="fas fa-map-marker-alt" style="font-size: 24px; margin-left: 10px;"></i>
+                    {{ property.location }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="property-section">
+            <h2 class="section-title">
+                <i class="fas fa-user-tie"></i>
+                المسوق العقاري
+            </h2>
+            <div class="agent-info">
+                <img src="{{ agent.image }}" alt="{{ agent.name }}" class="agent-image">
+                <div class="agent-details">
+                    <div class="agent-name">{{ agent.name }}</div>
+                    <div class="agent-title">{{ agent.title }}</div>
+                    <div class="agent-rating">
+                        {% for i in range(5) %}
+                            {% if i < agent.rating %}
+                                <i class="fas fa-star"></i>
+                            {% else %}
+                                <i class="far fa-star"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="contact-agent">
+                <a href="tel:{{ agent.phone }}" class="contact-button">
+                    <i class="fas fa-phone-alt"></i>
+                    اتصال
+                </a>
+                <a href="https://wa.me/{{ agent.phone }}" class="contact-button">
+                    <i class="fab fa-whatsapp"></i>
+                    واتساب
+                </a>
+                <a href="{{ url_for('messages') }}" class="contact-button primary">
+                    <i class="fas fa-comments"></i>
+                    مراسلة
+                </a>
+            </div>
+        </div>
+        
+        <div class="property-actions">
+            <button class="save-button"><i class="far fa-heart"></i> حفظ</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-play video when in view
+        const video = document.querySelector('.main-video');
+        if (video) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        video.play();
+                    } else {
+                        video.pause();
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            observer.observe(video);
+        }
+        
+        // Gallery image click to change main video preview
+        const galleryImages = document.querySelectorAll('.gallery-image');
+        galleryImages.forEach(img => {
+            img.addEventListener('click', function() {
+                // Animation effect
+                img.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    img.style.transform = 'scale(1)';
+                }, 300);
+                
+                // In a real implementation, this would change the main preview
+                // For now, we'll just show a visual feedback
+                const mainVideo = document.querySelector('.main-video');
+                mainVideo.style.opacity = '0.7';
+                setTimeout(() => {
+                    mainVideo.style.opacity = '1';
+                }, 300);
+            });
+        });
+    });
+</script>
+{% endblock %}

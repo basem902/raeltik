@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+
+{% block title %}المفضلة | تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important; /* إضافة مساحة في الأسفل للشريط السفلي */
+    }
+    
+    .favorites-container {
+        padding: 20px 15px 70px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .page-title {
+        color: var(--text-color);
+        margin-bottom: 20px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: bold;
+        text-align: center;
+        transition: color 0.3s ease;
+    }
+    
+    .favorites-empty {
+        text-align: center;
+        padding: 40px 20px;
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        animation: fadeIn 0.5s ease;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .empty-icon {
+        font-size: 60px;
+        color: var(--text-secondary);
+        margin-bottom: 20px;
+        transition: color 0.3s ease;
+    }
+    
+    .empty-text {
+        font-family: 'Tajawal', sans-serif;
+        font-size: 18px;
+        color: var(--text-color);
+        margin-bottom: 20px;
+        transition: color 0.3s ease;
+    }
+    
+    .browse-button {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: bold;
+        text-decoration: none;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    
+    .browse-button:hover {
+        background-color: #c09c31;
+        transform: translateY(-3px);
+    }
+    
+    .favorites-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .favorite-item {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+        animation: fadeIn 0.5s ease;
+        animation-fill-mode: both;
+    }
+    
+    .favorite-item:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+    
+    .favorite-item:nth-child(3) {
+        animation-delay: 0.2s;
+    }
+    
+    .favorite-item:nth-child(4) {
+        animation-delay: 0.3s;
+    }
+    
+    .favorite-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .favorite-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+    
+    .favorite-content {
+        padding: 15px;
+    }
+    
+    .favorite-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--text-color);
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    .favorite-location {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+    }
+    
+    .favorite-price {
+        font-family: 'Roboto', sans-serif;
+        font-size: 18px;
+        font-weight: bold;
+        color: var(--primary-color);
+        transition: color 0.3s ease;
+    }
+    
+    .favorite-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-color);
+        transition: border-color 0.3s ease;
+    }
+    
+    .favorite-stat {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    
+    .favorite-stat i {
+        margin-left: 5px;
+        color: var(--primary-color);
+        transition: color 0.3s ease;
+    }
+    
+    .favorite-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+    }
+    
+    .action-button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: bold;
+        font-size: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    
+    .action-button:hover {
+        transform: translateY(-2px);
+    }
+    
+    .action-button i {
+        margin-left: 5px;
+    }
+    
+    .view-button {
+        background-color: var(--primary-color);
+        color: white;
+        margin-left: 10px;
+    }
+    
+    .view-button:hover {
+        background-color: #c09c31;
+    }
+    
+    .remove-button {
+        background-color: var(--action-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+    }
+    
+    .remove-button:hover {
+        background-color: var(--alert-color);
+        color: white;
+        border-color: var(--alert-color);
+    }
+    
+    .remove-confirmation {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.7);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+        z-index: 10;
+        border-radius: 15px;
+    }
+    
+    .remove-confirmation.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    .confirmation-text {
+        color: white;
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .confirmation-buttons {
+        display: flex;
+        width: 100%;
+    }
+    
+    .confirm-button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Cairo', sans-serif;
+        font-weight: bold;
+        margin: 0 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    
+    .confirm-button:hover {
+        transform: translateY(-2px);
+    }
+    
+    .confirm-yes {
+        background-color: var(--alert-color);
+        color: white;
+    }
+    
+    .confirm-yes:hover {
+        background-color: #c0392b;
+    }
+    
+    .confirm-no {
+        background-color: #555;
+        color: white;
+    }
+    
+    .confirm-no:hover {
+        background-color: #444;
+    }
+    
+    /* Dark mode specific styles */
+    .dark-mode .favorites-empty,
+    .dark-mode .favorite-item {
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    @media (min-width: 768px) {
+        .favorites-list {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="favorites-container">
+    <h1 class="page-title">المفضلة</h1>
+    
+    {% if properties %}
+    <div class="favorites-list">
+        {% for property in properties %}
+        <div class="favorite-item" id="favorite-{{ property.id }}">
+            <img src="{{ property.images[0] }}" alt="{{ property.title }}" class="favorite-image">
+            <div class="favorite-content">
+                <h2 class="favorite-title">{{ property.title }}</h2>
+                <div class="favorite-location">
+                    <i class="fas fa-map-marker-alt"></i> {{ property.location }}
+                </div>
+                <div class="favorite-price">{{ property.price | format_price }} ريال</div>
+                <div class="favorite-stats">
+                    <div class="favorite-stat">
+                        <i class="fas fa-bed"></i> {{ property.bedrooms }}
+                    </div>
+                    <div class="favorite-stat">
+                        <i class="fas fa-bath"></i> {{ property.bathrooms }}
+                    </div>
+                    <div class="favorite-stat">
+                        <i class="fas fa-ruler-combined"></i> {{ property.area }} م²
+                    </div>
+                </div>
+                <div class="favorite-actions">
+                    <button class="action-button remove-button" onclick="confirmRemove('{{ property.id }}')">
+                        <i class="fas fa-trash-alt"></i> إزالة
+                    </button>
+                    <a href="{{ url_for('property_details', property_id=property.id) }}" class="action-button view-button">
+                        <i class="fas fa-eye"></i> عرض
+                    </a>
+                </div>
+            </div>
+            <div class="remove-confirmation" id="confirmation-{{ property.id }}">
+                <div class="confirmation-text">هل أنت متأكد من إزالة هذا العقار من المفضلة؟</div>
+                <div class="confirmation-buttons">
+                    <button class="confirm-button confirm-no" onclick="cancelRemove('{{ property.id }}')">لا</button>
+                    <button class="confirm-button confirm-yes" onclick="removeFromFavorites('{{ property.id }}')">نعم</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="favorites-empty">
+        <div class="empty-icon">
+            <i class="far fa-heart"></i>
+        </div>
+        <div class="empty-text">لا توجد عقارات في المفضلة</div>
+        <a href="{{ url_for('index') }}" class="browse-button">
+            تصفح العقارات
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function confirmRemove(propertyId) {
+        document.getElementById(`confirmation-${propertyId}`).classList.add('active');
+    }
+    
+    function cancelRemove(propertyId) {
+        document.getElementById(`confirmation-${propertyId}`).classList.remove('active');
+    }
+    
+    function removeFromFavorites(propertyId) {
+        // Add animation for removal
+        const favoriteItem = document.getElementById(`favorite-${propertyId}`);
+        favoriteItem.style.transition = 'all 0.5s ease';
+        favoriteItem.style.transform = 'translateX(100%)';
+        favoriteItem.style.opacity = '0';
+        
+        // Send request to remove from favorites
+        fetch(`/remove-favorite/${propertyId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Remove the element after animation completes
+                setTimeout(() => {
+                    favoriteItem.remove();
+                    
+                    // Check if there are no more favorites
+                    const remainingFavorites = document.querySelectorAll('.favorite-item');
+                    if (remainingFavorites.length === 0) {
+                        // Create and show empty state
+                        const favoritesContainer = document.querySelector('.favorites-container');
+                        const favoritesList = document.querySelector('.favorites-list');
+                        favoritesList.remove();
+                        
+                        const emptyState = document.createElement('div');
+                        emptyState.className = 'favorites-empty';
+                        emptyState.innerHTML = `
+                            <div class="empty-icon">
+                                <i class="far fa-heart"></i>
+                            </div>
+                            <div class="empty-text">لا توجد عقارات في المفضلة</div>
+                            <a href="{{ url_for('index') }}" class="browse-button">
+                                تصفح العقارات
+                            </a>
+                        `;
+                        
+                        favoritesContainer.appendChild(emptyState);
+                        
+                        // Add fade-in animation
+                        setTimeout(() => {
+                            emptyState.style.opacity = '0';
+                            emptyState.style.transform = 'translateY(10px)';
+                            emptyState.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                            
+                            setTimeout(() => {
+                                emptyState.style.opacity = '1';
+                                emptyState.style.transform = 'translateY(0)';
+                            }, 10);
+                        }, 10);
+                    }
+                }, 500);
+            } else {
+                // If there was an error, revert the animation
+                favoriteItem.style.transform = 'translateX(0)';
+                favoriteItem.style.opacity = '1';
+                cancelRemove(propertyId);
+                alert('حدث خطأ أثناء إزالة العقار من المفضلة');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // If there was an error, revert the animation
+            favoriteItem.style.transform = 'translateX(0)';
+            favoriteItem.style.opacity = '1';
+            cancelRemove(propertyId);
+            alert('حدث خطأ أثناء إزالة العقار من المفضلة');
+        });
+    }
+</script>
+{% endblock %}

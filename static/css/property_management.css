@@ -1,0 +1,486 @@
+/* أنماط شاشة إدارة العقارات */
+
+/* الحاوية الرئيسية */
+.property-management-container {
+    padding: 20px;
+    direction: rtl;
+}
+
+/* ترويسة الصفحة */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.add-property-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.add-property-btn i {
+    margin-left: 8px;
+}
+
+.add-property-btn:hover {
+    background-color: var(--primary-color-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* بطاقات الإحصائيات */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.stat-title {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.stat-change {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.stat-change i {
+    margin-left: 5px;
+}
+
+.stat-change.positive {
+    color: #4CAF50;
+}
+
+.stat-change.negative {
+    color: #F44336;
+}
+
+/* قائمة العقارات */
+.property-list-container {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.property-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.property-list-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.property-filters {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-dropdown select {
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.search-box input {
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    min-width: 200px;
+}
+
+/* جدول العقارات */
+.property-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.property-table th {
+    text-align: right;
+    padding: 10px 15px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.property-table td {
+    padding: 15px;
+    background-color: var(--table-row-bg);
+    vertical-align: middle;
+}
+
+.property-table tr td:first-child {
+    border-radius: 0 8px 8px 0;
+}
+
+.property-table tr td:last-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.property-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.property-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+}
+
+.property-location {
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+}
+
+.property-location i {
+    margin-left: 5px;
+    font-size: 12px;
+}
+
+.property-price {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.property-status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-active {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: #4CAF50;
+}
+
+.status-pending {
+    background-color: rgba(255, 152, 0, 0.1);
+    color: #FF9800;
+}
+
+.status-sold {
+    background-color: rgba(33, 150, 243, 0.1);
+    color: #2196F3;
+}
+
+.status-inactive {
+    background-color: rgba(158, 158, 158, 0.1);
+    color: #9E9E9E;
+}
+
+.property-stats {
+    display: flex;
+    gap: 15px;
+}
+
+.property-stat {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.property-stat i {
+    margin-left: 5px;
+    font-size: 14px;
+}
+
+.property-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    background-color: rgba(33, 150, 243, 0.1);
+    color: #2196F3;
+}
+
+.edit-btn:hover {
+    background-color: #2196F3;
+    color: white;
+}
+
+.status-btn {
+    background-color: rgba(255, 152, 0, 0.1);
+    color: #FF9800;
+}
+
+.status-btn:hover {
+    background-color: #FF9800;
+    color: white;
+}
+
+.delete-btn {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: #F44336;
+}
+
+.delete-btn:hover {
+    background-color: #F44336;
+    color: white;
+}
+
+/* ترقيم الصفحات */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    gap: 5px;
+}
+
+.pagination-item {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    background-color: var(--table-row-bg);
+    color: var(--text-secondary);
+}
+
+.pagination-item:hover {
+    background-color: var(--primary-color-light);
+    color: var(--primary-color);
+}
+
+.pagination-item.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.pagination-dots {
+    cursor: default;
+}
+
+.pagination-dots:hover {
+    background-color: var(--table-row-bg);
+    color: var(--text-secondary);
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-container {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    direction: rtl;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.modal-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.modal-btn-primary:hover {
+    background-color: var(--primary-color-dark);
+}
+
+.modal-btn-secondary {
+    background-color: var(--secondary-btn-bg);
+    color: var(--text-primary);
+}
+
+.modal-btn-secondary:hover {
+    background-color: var(--secondary-btn-bg-hover);
+}
+
+.modal-btn-danger {
+    background-color: #F44336;
+    color: white;
+}
+
+.modal-btn-danger:hover {
+    background-color: #D32F2F;
+}
+
+/* تكيف مع الشاشات الصغيرة */
+@media (max-width: 768px) {
+    .property-list-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .property-filters {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .filter-dropdown select,
+    .search-box input {
+        min-width: unset;
+        width: 100%;
+    }
+    
+    .property-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* وضع الظلام */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --card-bg: #1E1E2D;
+        --table-row-bg: #2B2B40;
+        --border-color: #3F3F5F;
+        --input-bg: #2B2B40;
+        --secondary-btn-bg: #2B2B40;
+        --secondary-btn-bg-hover: #3F3F5F;
+    }
+}

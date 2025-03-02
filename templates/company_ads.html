@@ -1,0 +1,553 @@
+{% extends "base.html" %}
+
+{% block title %}متابعة الإعلانات - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important;
+    }
+    
+    .ads-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .back-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--card-bg);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--text-color);
+        font-size: 18px;
+        margin-left: 15px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .page-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+
+    .stats-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        flex: 1;
+        min-width: 200px;
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-title {
+        font-size: 16px;
+        color: var(--muted-text);
+        margin-bottom: 10px;
+    }
+    
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+    
+    .trends-card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+    }
+    
+    .card-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 20px;
+    }
+    
+    .chart-container {
+        height: 300px;
+        margin-bottom: 15px;
+    }
+    
+    .filters-row {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+    
+    .filter-item {
+        padding: 8px 15px;
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Tajawal', sans-serif;
+        color: var(--text-color);
+    }
+    
+    .filter-item:hover, .filter-item.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .properties-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .property-card {
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+    
+    .property-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    .property-image {
+        position: relative;
+        height: 180px;
+        overflow: hidden;
+    }
+    
+    .property-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .property-card:hover .property-image img {
+        transform: scale(1.05);
+    }
+    
+    .property-type {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 10px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .property-status {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .status-active {
+        background-color: #4CAF50;
+        color: white;
+    }
+    
+    .status-pending {
+        background-color: #FFC107;
+        color: #333;
+    }
+    
+    .status-sold {
+        background-color: #E91E63;
+        color: white;
+    }
+    
+    .property-info {
+        padding: 15px;
+    }
+    
+    .property-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: var(--text-color);
+    }
+    
+    .property-location {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--muted-text);
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    .property-price {
+        font-family: 'Roboto', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+    }
+    
+    .stats-row-small {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+        color: var(--muted-text);
+    }
+    
+    .stat-number {
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .action-btn {
+        padding: 8px 12px;
+        border-radius: 5px;
+        border: none;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .boost-btn {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .boost-btn:hover {
+        background-color: #c39f31;
+    }
+    
+    .edit-btn {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+    
+    .edit-btn:hover {
+        background-color: #2a2a2a;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+        gap: 10px;
+    }
+    
+    .page-item {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        background-color: var(--card-bg);
+        color: var(--text-color);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .page-item:hover, .page-item.active {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .page-prev, .page-next {
+        width: auto;
+        padding: 0 15px;
+    }
+    
+    /* التخطيط المستجيب */
+    @media (max-width: 768px) {
+        .stats-row {
+            flex-direction: column;
+        }
+        
+        .properties-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ads-container">
+    <div class="page-header">
+        <a href="{{ url_for('index') }}" class="back-button">
+            <i class="fas fa-arrow-right"></i>
+        </a>
+        <h1 class="page-title">متابعة الإعلانات</h1>
+    </div>
+    
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-title">إجمالي الإعلانات</div>
+            <div class="stat-value">{{ total_properties }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">إجمالي المشاهدات</div>
+            <div class="stat-value">{{ total_views }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">إجمالي الاستفسارات</div>
+            <div class="stat-value">{{ total_inquiries }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-title">معدل التحويل</div>
+            <div class="stat-value">{{ conversion_rate }}%</div>
+        </div>
+    </div>
+    
+    <div class="trends-card">
+        <h2 class="card-title">اتجاهات المشاهدات والاستفسارات</h2>
+        <div class="chart-container">
+            <canvas id="trendsChart"></canvas>
+        </div>
+    </div>
+    
+    <div class="filters-row">
+        <div class="filter-item active" data-filter="all">الكل</div>
+        <div class="filter-item" data-filter="villa">فيلا</div>
+        <div class="filter-item" data-filter="apartment">شقة</div>
+        <div class="filter-item" data-filter="penthouse">بنتهاوس</div>
+        <div class="filter-item" data-filter="active">نشط</div>
+        <div class="filter-item" data-filter="pending">قيد المراجعة</div>
+        <div class="filter-item" data-filter="sold">تم البيع</div>
+    </div>
+    
+    <div class="properties-grid">
+        {% for property in properties %}
+        <div class="property-card" data-type="{{ property.type }}" data-status="{{ property.status }}">
+            <div class="property-image">
+                {% if property.images|length > 0 %}
+                <img src="{{ property.images[0] }}" alt="{{ property.title }}">
+                {% else %}
+                <img src="https://via.placeholder.com/300x180?text=No+Image" alt="No Image">
+                {% endif %}
+                <div class="property-type">{{ property.type_label }}</div>
+                <div class="property-status status-{{ property.status }}">{{ property.status_label }}</div>
+            </div>
+            <div class="property-info">
+                <h3 class="property-title">{{ property.title }}</h3>
+                <div class="property-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    {{ property.location }}
+                </div>
+                <div class="property-price">{{ property.price|format_price }} ريال</div>
+                <div class="stats-row-small">
+                    <div class="stat-item">
+                        <div class="stat-label">المشاهدات</div>
+                        <div class="stat-number">{{ property.views }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">الاستفسارات</div>
+                        <div class="stat-number">{{ property.inquiries }}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">التحويل</div>
+                        <div class="stat-number">{{ property.conversion_rate }}%</div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn boost-btn">تعزيز الإعلان</button>
+                    <button class="action-btn edit-btn">تعديل</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="pagination">
+        <a class="page-item page-prev"><i class="fas fa-chevron-right"></i></a>
+        <a class="page-item active">1</a>
+        <a class="page-item">2</a>
+        <a class="page-item">3</a>
+        <a class="page-item page-next"><i class="fas fa-chevron-left"></i></a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // البيانات الواردة من الخادم
+        const viewsData = JSON.parse('{{ views_data|tojson|safe }}');
+        const inquiriesData = JSON.parse('{{ inquiries_data|tojson|safe }}');
+        const propertyData = JSON.parse('{{ property_data|tojson|safe }}');
+        
+        // رسم بياني للاتجاهات
+        const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+        new Chart(trendsCtx, {
+            type: 'line',
+            data: {
+                labels: viewsData.labels,
+                datasets: [
+                    {
+                        label: 'المشاهدات',
+                        data: viewsData.data,
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'الاستفسارات',
+                        data: inquiriesData.data,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: 'Tajawal'
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                family: 'Roboto'
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                family: 'Tajawal'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // معالجة الفلاتر
+        const filterItems = document.querySelectorAll('.filter-item');
+        const propertyCards = document.querySelectorAll('.property-card');
+        
+        filterItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // إزالة الفلتر النشط
+                filterItems.forEach(i => i.classList.remove('active'));
+                
+                // تفعيل الفلتر الحالي
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                // عرض العقارات المناسبة
+                propertyCards.forEach(card => {
+                    if (filter === 'all') {
+                        card.style.display = '';
+                    } else if (card.getAttribute('data-type') === filter || card.getAttribute('data-status') === filter) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // معالجة أزرار التعزيز والتعديل
+        document.querySelectorAll('.boost-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const propertyCard = this.closest('.property-card');
+                const propertyId = propertyCard.getAttribute('data-id');
+                
+                // ستتم إضافة المزيد من المنطق هنا لتعزيز الإعلان
+                alert('سيتم تعزيز الإعلان قريبًا');
+            });
+        });
+        
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const propertyCard = this.closest('.property-card');
+                const propertyId = propertyCard.getAttribute('data-id');
+                
+                // توجيه المستخدم إلى صفحة تعديل العقار
+                // window.location.href = `/property/edit/${propertyId}`;
+                alert('سيتم تحويلك إلى صفحة تعديل العقار');
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,847 @@
+{% extends "base.html" %}
+
+{% block title %}نشر إعلان جديد - تيك توك العقاري{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* الأنماط الموجودة مسبقاً */
+    body {
+        background-color: var(--background-color);
+        transition: background-color 0.3s ease;
+        padding-bottom: 70px !important; /* إضافة مساحة في الأسفل للشريط السفلي */
+    }
+    
+    .new-ad-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+    
+    .page-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .form-container {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        margin-bottom: 30px;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .form-section {
+        margin-bottom: 30px;
+    }
+    
+    .section-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+        transition: color 0.3s ease, border-color 0.3s ease;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        background-color: var(--action-bg);
+        color: var(--text-color);
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+    }
+    
+    .form-textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+    
+    .form-row {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .form-col {
+        flex: 1;
+    }
+    
+    .upload-area {
+        border: 2px dashed var(--border-color);
+        border-radius: 10px;
+        padding: 30px;
+        text-align: center;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .upload-area:hover {
+        border-color: var(--primary-color);
+        background-color: rgba(212, 175, 55, 0.05);
+    }
+    
+    .upload-icon {
+        font-size: 48px;
+        color: var(--text-secondary);
+        margin-bottom: 15px;
+        transition: color 0.3s ease;
+    }
+    
+    .upload-title {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+    }
+    
+    .upload-hint {
+        font-size: 14px;
+        color: var(--text-secondary);
+        transition: color 0.3s ease;
+    }
+    
+    .upload-input {
+        display: none;
+    }
+    
+    .preview-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .preview-item {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .preview-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .preview-image {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+    }
+    
+    .preview-video {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+    }
+    
+    .preview-remove {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 24px;
+        height: 24px;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    
+    .preview-remove:hover {
+        background-color: rgba(255, 0, 0, 0.7);
+    }
+    
+    .ai-options {
+        background-color: rgba(52, 152, 219, 0.05);
+        border: 1px solid rgba(52, 152, 219, 0.2);
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    
+    .ai-option {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .ai-option:last-child {
+        margin-bottom: 0;
+    }
+    
+    .ai-checkbox {
+        margin-left: 10px;
+    }
+    
+    .ai-label {
+        font-weight: 600;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .ai-description {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-top: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    .preview-btn {
+        background-color: var(--info-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .preview-btn i {
+        margin-left: 8px;
+    }
+    
+    .preview-btn:hover {
+        background-color: #3a7bc8;
+        transform: translateY(-2px);
+    }
+    
+    .publish-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .publish-btn i {
+        margin-left: 8px;
+    }
+    
+    .publish-btn:hover {
+        background-color: #c49f33;
+        transform: translateY(-2px);
+    }
+    
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+    
+    .cancel-btn {
+        background-color: var(--action-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .cancel-btn:hover {
+        background-color: var(--border-color);
+    }
+    
+    .action-btns {
+        display: flex;
+        gap: 15px;
+    }
+    
+    .ad-preview-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .ad-preview-content {
+        background-color: var(--card-bg);
+        border-radius: 10px;
+        width: 90%;
+        max-width: 800px;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease;
+    }
+    
+    .ad-preview-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+        transition: border-color 0.3s ease;
+    }
+    
+    .ad-preview-title {
+        font-family: 'Cairo', sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+    }
+    
+    .ad-preview-close {
+        font-size: 24px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+    
+    .ad-preview-close:hover {
+        color: var(--text-color);
+    }
+    
+    .ad-preview-body {
+        margin-bottom: 20px;
+    }
+    
+    .ad-preview-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+        transition: border-color 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            flex-direction: column;
+            gap: 0;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .action-btns {
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="new-ad-container">
+    <div class="page-header">
+        <h1 class="page-title">نشر إعلان جديد</h1>
+    </div>
+    
+    <div class="form-container">
+        <form id="newAdForm">
+            <!-- معلومات العقار الأساسية -->
+            <div class="form-section">
+                <h2 class="section-title">معلومات العقار الأساسية</h2>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="propertyTitle">عنوان العقار</label>
+                            <input type="text" class="form-control" id="propertyTitle" placeholder="أدخل عنوان العقار">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="propertyType">نوع العقار</label>
+                            <select class="form-control" id="propertyType">
+                                <option value="">اختر نوع العقار</option>
+                                <option value="apartment">شقة</option>
+                                <option value="villa">فيلا</option>
+                                <option value="land">أرض</option>
+                                <option value="commercial">تجاري</option>
+                                <option value="office">مكتب</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="propertyStatus">حالة العقار</label>
+                            <select class="form-control" id="propertyStatus">
+                                <option value="">اختر حالة العقار</option>
+                                <option value="sale">للبيع</option>
+                                <option value="rent">للإيجار</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="propertyPrice">السعر</label>
+                            <input type="number" class="form-control" id="propertyPrice" placeholder="أدخل سعر العقار">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="propertyDescription">وصف العقار</label>
+                    <textarea class="form-control form-textarea" id="propertyDescription" placeholder="أدخل وصفاً تفصيلياً للعقار"></textarea>
+                </div>
+            </div>
+            
+            <!-- موقع العقار -->
+            <div class="form-section">
+                <h2 class="section-title">موقع العقار</h2>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="propertyCity">المدينة</label>
+                            <select class="form-control" id="propertyCity">
+                                <option value="">اختر المدينة</option>
+                                <option value="riyadh">الرياض</option>
+                                <option value="jeddah">جدة</option>
+                                <option value="dammam">الدمام</option>
+                                <option value="makkah">مكة المكرمة</option>
+                                <option value="madinah">المدينة المنورة</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="propertyDistrict">الحي</label>
+                            <input type="text" class="form-control" id="propertyDistrict" placeholder="أدخل اسم الحي">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="propertyAddress">العنوان التفصيلي</label>
+                    <input type="text" class="form-control" id="propertyAddress" placeholder="أدخل العنوان التفصيلي">
+                </div>
+            </div>
+            
+            <!-- مواصفات العقار -->
+            <div class="form-section">
+                <h2 class="section-title">مواصفات العقار</h2>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="propertyArea">المساحة (متر مربع)</label>
+                            <input type="number" class="form-control" id="propertyArea" placeholder="أدخل مساحة العقار">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="propertyBedrooms">عدد غرف النوم</label>
+                            <input type="number" class="form-control" id="propertyBedrooms" placeholder="أدخل عدد غرف النوم">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="propertyBathrooms">عدد دورات المياه</label>
+                            <input type="number" class="form-control" id="propertyBathrooms" placeholder="أدخل عدد دورات المياه">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="propertyAge">عمر العقار (سنوات)</label>
+                            <input type="number" class="form-control" id="propertyAge" placeholder="أدخل عمر العقار">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- الوسائط المتعددة -->
+            <div class="form-section">
+                <h2 class="section-title">الصور والفيديو</h2>
+                
+                <!-- رفع الصور -->
+                <div class="upload-area" id="imageUploadArea">
+                    <i class="fas fa-images upload-icon"></i>
+                    <h3 class="upload-title">اسحب وأفلت الصور هنا</h3>
+                    <p class="upload-hint">أو انقر للاختيار من جهازك (الحد الأقصى 10 صور)</p>
+                    <input type="file" class="upload-input" id="imageUpload" multiple accept="image/*">
+                </div>
+                
+                <div class="preview-container" id="imagePreviewContainer">
+                    <!-- سيتم إضافة معاينات الصور هنا -->
+                </div>
+                
+                <!-- رفع الفيديو -->
+                <div class="upload-area" id="videoUploadArea">
+                    <i class="fas fa-video upload-icon"></i>
+                    <h3 class="upload-title">اسحب وأفلت الفيديو هنا</h3>
+                    <p class="upload-hint">أو انقر للاختيار من جهازك (الحد الأقصى 1 فيديو)</p>
+                    <input type="file" class="upload-input" id="videoUpload" accept="video/*">
+                </div>
+                
+                <div class="preview-container" id="videoPreviewContainer">
+                    <!-- سيتم إضافة معاينة الفيديو هنا -->
+                </div>
+                
+                <!-- خيارات تحسين الفيديو بالذكاء الاصطناعي -->
+                <div class="ai-options">
+                    <h3 class="section-title">تحسين الفيديو بالذكاء الاصطناعي</h3>
+                    
+                    <div class="ai-option">
+                        <input type="checkbox" class="ai-checkbox" id="aiEnhanceQuality">
+                        <div>
+                            <label class="ai-label" for="aiEnhanceQuality">تحسين جودة الفيديو</label>
+                            <p class="ai-description">رفع دقة الفيديو وتحسين الألوان والإضاءة</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-option">
+                        <input type="checkbox" class="ai-checkbox" id="aiAddMusic">
+                        <div>
+                            <label class="ai-label" for="aiAddMusic">إضافة موسيقى خلفية</label>
+                            <p class="ai-description">إضافة موسيقى مناسبة تتماشى مع محتوى الفيديو</p>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-option">
+                        <input type="checkbox" class="ai-checkbox" id="aiAddCaption">
+                        <div>
+                            <label class="ai-label" for="aiAddCaption">إضافة نصوص توضيحية</label>
+                            <p class="ai-description">إضافة نصوص توضيحية تلقائية تبرز مميزات العقار</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- أزرار الإجراءات -->
+            <div class="form-actions">
+                <button type="button" class="cancel-btn">إلغاء</button>
+                
+                <div class="action-btns">
+                    <button type="button" class="preview-btn" id="previewAdBtn">
+                        <i class="fas fa-eye"></i>
+                        معاينة الإعلان
+                    </button>
+                    
+                    <button type="submit" class="publish-btn">
+                        <i class="fas fa-paper-plane"></i>
+                        نشر الإعلان
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- نافذة معاينة الإعلان -->
+<div class="ad-preview-modal" id="adPreviewModal">
+    <div class="ad-preview-content">
+        <div class="ad-preview-header">
+            <h2 class="ad-preview-title">معاينة الإعلان</h2>
+            <i class="fas fa-times ad-preview-close" id="closePreviewBtn"></i>
+        </div>
+        
+        <div class="ad-preview-body" id="adPreviewBody">
+            <!-- سيتم إضافة محتوى المعاينة هنا -->
+        </div>
+        
+        <div class="ad-preview-footer">
+            <button type="button" class="publish-btn">
+                <i class="fas fa-paper-plane"></i>
+                نشر الإعلان
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // تهيئة مناطق رفع الملفات
+        const imageUploadArea = document.getElementById('imageUploadArea');
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+        
+        const videoUploadArea = document.getElementById('videoUploadArea');
+        const videoUpload = document.getElementById('videoUpload');
+        const videoPreviewContainer = document.getElementById('videoPreviewContainer');
+        
+        // معاينة الإعلان
+        const previewAdBtn = document.getElementById('previewAdBtn');
+        const adPreviewModal = document.getElementById('adPreviewModal');
+        const closePreviewBtn = document.getElementById('closePreviewBtn');
+        const adPreviewBody = document.getElementById('adPreviewBody');
+        
+        // رفع الصور
+        imageUploadArea.addEventListener('click', function() {
+            imageUpload.click();
+        });
+        
+        imageUpload.addEventListener('change', function() {
+            handleImageUpload(this.files);
+        });
+        
+        imageUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            imageUploadArea.classList.add('dragover');
+        });
+        
+        imageUploadArea.addEventListener('dragleave', function() {
+            imageUploadArea.classList.remove('dragover');
+        });
+        
+        imageUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            imageUploadArea.classList.remove('dragover');
+            handleImageUpload(e.dataTransfer.files);
+        });
+        
+        // رفع الفيديو
+        videoUploadArea.addEventListener('click', function() {
+            videoUpload.click();
+        });
+        
+        videoUpload.addEventListener('change', function() {
+            handleVideoUpload(this.files);
+        });
+        
+        videoUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            videoUploadArea.classList.add('dragover');
+        });
+        
+        videoUploadArea.addEventListener('dragleave', function() {
+            videoUploadArea.classList.remove('dragover');
+        });
+        
+        videoUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            videoUploadArea.classList.remove('dragover');
+            handleVideoUpload(e.dataTransfer.files);
+        });
+        
+        // معاينة الإعلان
+        previewAdBtn.addEventListener('click', function() {
+            generateAdPreview();
+            adPreviewModal.style.display = 'flex';
+        });
+        
+        closePreviewBtn.addEventListener('click', function() {
+            adPreviewModal.style.display = 'none';
+        });
+        
+        // معالجة رفع الصور
+        function handleImageUpload(files) {
+            if (files.length > 10) {
+                alert('يمكنك رفع 10 صور كحد أقصى');
+                return;
+            }
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                if (!file.type.startsWith('image/')) {
+                    continue;
+                }
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item';
+                    
+                    const previewImage = document.createElement('img');
+                    previewImage.className = 'preview-image';
+                    previewImage.src = e.target.result;
+                    
+                    const removeBtn = document.createElement('div');
+                    removeBtn.className = 'preview-remove';
+                    removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    removeBtn.addEventListener('click', function() {
+                        previewItem.remove();
+                    });
+                    
+                    previewItem.appendChild(previewImage);
+                    previewItem.appendChild(removeBtn);
+                    
+                    imagePreviewContainer.appendChild(previewItem);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // معالجة رفع الفيديو
+        function handleVideoUpload(files) {
+            if (files.length === 0) return;
+            
+            const file = files[0];
+            
+            if (!file.type.startsWith('video/')) {
+                alert('الرجاء اختيار ملف فيديو صالح');
+                return;
+            }
+            
+            videoPreviewContainer.innerHTML = '';
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                
+                const previewVideo = document.createElement('video');
+                previewVideo.className = 'preview-video';
+                previewVideo.src = e.target.result;
+                previewVideo.controls = true;
+                
+                const removeBtn = document.createElement('div');
+                removeBtn.className = 'preview-remove';
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.addEventListener('click', function() {
+                    previewItem.remove();
+                    videoUpload.value = '';
+                });
+                
+                previewItem.appendChild(previewVideo);
+                previewItem.appendChild(removeBtn);
+                
+                videoPreviewContainer.appendChild(previewItem);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        // توليد معاينة الإعلان
+        function generateAdPreview() {
+            const propertyTitle = document.getElementById('propertyTitle').value || 'عنوان العقار';
+            const propertyType = document.getElementById('propertyType');
+            const propertyTypeText = propertyType.options[propertyType.selectedIndex]?.text || '';
+            
+            const propertyStatus = document.getElementById('propertyStatus');
+            const propertyStatusText = propertyStatus.options[propertyStatus.selectedIndex]?.text || '';
+            
+            const propertyPrice = document.getElementById('propertyPrice').value || '0';
+            const propertyDescription = document.getElementById('propertyDescription').value || 'وصف العقار';
+            
+            const propertyCity = document.getElementById('propertyCity');
+            const propertyCityText = propertyCity.options[propertyCity.selectedIndex]?.text || '';
+            
+            const propertyDistrict = document.getElementById('propertyDistrict').value || '';
+            const propertyAddress = document.getElementById('propertyAddress').value || '';
+            
+            const propertyArea = document.getElementById('propertyArea').value || '0';
+            const propertyBedrooms = document.getElementById('propertyBedrooms').value || '0';
+            const propertyBathrooms = document.getElementById('propertyBathrooms').value || '0';
+            const propertyAge = document.getElementById('propertyAge').value || '0';
+            
+            // إنشاء محتوى المعاينة
+            let previewHTML = `
+                <div class="property-preview">
+                    <h2>${propertyTitle}</h2>
+                    <div class="property-preview-meta">
+                        <span>${propertyTypeText}</span>
+                        <span>${propertyStatusText}</span>
+                        <span>${propertyCityText}${propertyDistrict ? ' - ' + propertyDistrict : ''}</span>
+                    </div>
+                    
+                    <div class="property-preview-price">
+                        <strong>${propertyPrice} ريال</strong>
+                    </div>
+                    
+                    <div class="property-preview-gallery">
+                        <!-- سيتم إضافة صور المعاينة هنا -->
+                    </div>
+                    
+                    <div class="property-preview-details">
+                        <div class="property-preview-detail">
+                            <i class="fas fa-ruler-combined"></i>
+                            <span>${propertyArea} م²</span>
+                        </div>
+                        <div class="property-preview-detail">
+                            <i class="fas fa-bed"></i>
+                            <span>${propertyBedrooms} غرف نوم</span>
+                        </div>
+                        <div class="property-preview-detail">
+                            <i class="fas fa-bath"></i>
+                            <span>${propertyBathrooms} دورات مياه</span>
+                        </div>
+                        <div class="property-preview-detail">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>${propertyAge} سنوات</span>
+                        </div>
+                    </div>
+                    
+                    <div class="property-preview-description">
+                        <h3>وصف العقار</h3>
+                        <p>${propertyDescription}</p>
+                    </div>
+                    
+                    <div class="property-preview-location">
+                        <h3>الموقع</h3>
+                        <p>${propertyAddress}</p>
+                    </div>
+                </div>
+            `;
+            
+            adPreviewBody.innerHTML = previewHTML;
+        }
+    });
+</script>
+{% endblock %}

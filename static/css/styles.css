@@ -1,0 +1,571 @@
+/* 
+ * تيك توك العقاري - الأنماط العامة
+ * تم التطوير بواسطة فريق تيك توك العقاري
+ */
+
+/* متغيرات CSS */
+:root {
+    /* Color Variables */
+    --primary-color: #D4AF37;
+    --secondary-color: #333333;
+    --background-color: #FFFFFF;
+    --card-bg: #FFFFFF;
+    --text-color: #333333;
+    --text-secondary: #666666;
+    --border-color: #EEEEEE;
+    --action-bg: #F5F5F5;
+    --alert-color: #E74C3C;
+    --success-color: #2ECC71;
+    --info-color: #4A90E2;
+    
+    /* Spacing */
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-md: 15px;
+    --spacing-lg: 20px;
+    --spacing-xl: 30px;
+    
+    /* Border Radius */
+    --radius-sm: 5px;
+    --radius-md: 8px;
+    --radius-lg: 15px;
+    --radius-circle: 50%;
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.15);
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* Dark Mode Variables */
+.dark-mode {
+    --background-color: #121212;
+    --card-bg: #1E1E1E;
+    --text-color: #FFFFFF;
+    --text-secondary: #AAAAAA;
+    --border-color: #333333;
+    --action-bg: #2A2A2A;
+    --shadow-sm: 0 2px 5px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Global Styles */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Tajawal', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    direction: rtl;
+    padding-bottom: 70px; /* زيادة المساحة في الأسفل للشريط السفلي للشاشات الكبيرة */
+    min-height: 100vh;
+    position: relative;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cairo', sans-serif;
+    color: var(--text-color);
+    transition: color var(--transition-normal);
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color var(--transition-normal);
+}
+
+a:hover {
+    color: #C09F2F;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: var(--card-bg);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    width: 100%;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark-mode .bottom-nav {
+    background-color: var(--card-bg);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 10px;
+    flex: 1;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.dark-mode .nav-item {
+    color: var(--text-secondary);
+}
+
+.nav-item i {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.nav-item.active {
+    color: var(--primary-color);
+}
+
+.nav-item:hover {
+    color: var(--primary-color);
+}
+
+/* Button Styles */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
+    font-family: 'Cairo', sans-serif;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color var(--transition-normal), color var(--transition-normal), transform var(--transition-normal);
+    border: none;
+    text-align: center;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #C09F2F;
+}
+
+.btn-secondary {
+    background-color: var(--action-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--border-color);
+}
+
+.btn-danger {
+    background-color: var(--alert-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #C0392B;
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #27AE60;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.action-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform var(--transition-normal);
+}
+
+.action-button:hover {
+    transform: scale(1.1);
+}
+
+.action-button i {
+    font-size: 20px;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+}
+
+.action-button.liked i {
+    color: var(--alert-color);
+}
+
+.action-button .count {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* Book Button */
+.btn-book {
+    display: inline-block;
+    width: auto;
+    margin: 15px auto;
+    padding: 10px 25px;
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: var(--radius-md);
+    font-weight: bold;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+}
+
+.btn-book:hover {
+    background-color: #C09F2F;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Card Styles */
+.card {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: background-color var(--transition-normal), box-shadow var(--transition-normal), transform var(--transition-normal);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-header {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-body {
+    padding: var(--spacing-md);
+}
+
+.card-footer {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn var(--transition-slow) forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in-right {
+    animation: slideInRight var(--transition-slow) forwards;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.slide-in-left {
+    animation: slideInLeft var(--transition-slow) forwards;
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Utility Classes */
+.text-primary { color: var(--primary-color); }
+.text-secondary { color: var(--text-secondary); }
+.text-danger { color: var(--alert-color); }
+.text-success { color: var(--success-color); }
+.text-info { color: var(--info-color); }
+
+.bg-primary { background-color: var(--primary-color); }
+.bg-secondary { background-color: var(--secondary-color); }
+.bg-danger { background-color: var(--alert-color); }
+.bg-success { background-color: var(--success-color); }
+.bg-info { background-color: var(--info-color); }
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.mt-1 { margin-top: var(--spacing-xs); }
+.mt-2 { margin-top: var(--spacing-sm); }
+.mt-3 { margin-top: var(--spacing-md); }
+.mt-4 { margin-top: var(--spacing-lg); }
+.mt-5 { margin-top: var(--spacing-xl); }
+
+.mb-1 { margin-bottom: var(--spacing-xs); }
+.mb-2 { margin-bottom: var(--spacing-sm); }
+.mb-3 { margin-bottom: var(--spacing-md); }
+.mb-4 { margin-bottom: var(--spacing-lg); }
+.mb-5 { margin-bottom: var(--spacing-xl); }
+
+.mr-1 { margin-right: var(--spacing-xs); }
+.mr-2 { margin-right: var(--spacing-sm); }
+.mr-3 { margin-right: var(--spacing-md); }
+.mr-4 { margin-right: var(--spacing-lg); }
+.mr-5 { margin-right: var(--spacing-xl); }
+
+.ml-1 { margin-left: var(--spacing-xs); }
+.ml-2 { margin-left: var(--spacing-sm); }
+.ml-3 { margin-left: var(--spacing-md); }
+.ml-4 { margin-left: var(--spacing-lg); }
+.ml-5 { margin-left: var(--spacing-xl); }
+
+.p-1 { padding: var(--spacing-xs); }
+.p-2 { padding: var(--spacing-sm); }
+.p-3 { padding: var(--spacing-md); }
+.p-4 { padding: var(--spacing-lg); }
+.p-5 { padding: var(--spacing-xl); }
+
+.rounded { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-circle { border-radius: var(--radius-circle); }
+
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+
+/* App Container */
+.app-container {
+    min-height: calc(100vh - 70px); /* تعديل الارتفاع ليتناسب مع شريط التنقل الأكبر للشاشات الكبيرة */
+    padding-bottom: 70px;
+    position: relative;
+}
+
+/* Dark Mode Toggle */
+.dark-mode-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background-color: var(--card-bg);
+    border-radius: var(--radius-circle);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    transition: background-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.dark-mode-toggle i {
+    color: var(--text-color);
+    font-size: 20px;
+    transition: color var(--transition-normal), transform var(--transition-normal);
+}
+
+.dark-mode-toggle:hover i {
+    transform: rotate(30deg);
+}
+
+/* Media Queries */
+@media (min-width: 768px) {
+    .bottom-nav {
+        height: 70px;
+    }
+    
+    .nav-item {
+        font-size: 12px;
+    }
+    
+    .nav-icon {
+        font-size: 24px;
+    }
+}
+
+@media (min-width: 992px) {
+    /* إزالة النمط الذي يجعل الشريط في الأعلى */
+    /* 
+    .bottom-nav {
+        top: 0;
+        bottom: auto;
+    }
+    
+    body {
+        padding-top: 70px;
+        padding-bottom: 0;
+    }
+    */
+    
+    /* نمط للتأكد من أن الشريط دائمًا في الأسفل */
+    .bottom-nav {
+        bottom: 0;
+        top: auto;
+    }
+    
+    body {
+        padding-top: 0;
+        padding-bottom: 70px;
+    }
+}
+
+/* إضافة مساحة في الأسفل للصفحات التي تحتوي على شريط إدخال الرسائل */
+.chat-container {
+    padding-bottom: 140px; /* زيادة المساحة لتجنب تداخل شريط الإدخال مع شريط التنقل */
+    height: auto !important;
+    min-height: calc(100vh - 140px);
+}
+
+.chat-footer {
+    position: fixed;
+    bottom: 70px; /* ضبط المسافة فوق شريط التنقل السفلي */
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    padding: 10px;
+    border-top: 1px solid #eee;
+    z-index: 999;
+    width: 100%;
+}
+
+/* تحسين شريط الإدخال في الدردشة */
+.chat-input-container {
+    position: fixed;
+    bottom: 70px; /* مساحة لشريط التنقل السفلي */
+    left: 0;
+    right: 0;
+    padding: 10px 15px;
+    background-color: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    z-index: 999;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 12px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background-color: var(--action-bg);
+    color: var(--text-color);
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.chat-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+.chat-send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.chat-send-btn:hover {
+    transform: scale(1.1);
+    background-color: #c49f33;
+}
+
+.chat-send-btn i {
+    font-size: 18px;
+}
+
+/* تعديلات الوضع الداكن لشريط الإدخال */
+.dark-mode .chat-input-container {
+    background-color: var(--card-bg);
+    border-top: 1px solid var(--border-color);
+}
+
+.dark-mode .chat-input {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.dark-mode .chat-send-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
